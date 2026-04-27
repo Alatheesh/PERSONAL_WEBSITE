@@ -43,7 +43,7 @@ function displayFiles(files) {
 
 // ---------------- NAVIGATION ----------------
 function openFile(id) {
-  window.location.href = \`file.html?id=\${id}\`;
+  window.location.href = "file.html?id=" + id;
 }
 
 // ---------------- SEARCH ----------------
