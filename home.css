@@ -67,3 +67,28 @@ body::before {
 
   z-index: 2;
 }
+
+/* PROFILE IMAGE FIX */
+.profile-link {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.profile-link img {
+  width: 60px;          /* control size */
+  height: 60px;         /* make square */
+  border-radius: 50%;   /* circle */
+  object-fit: cover;    /* crop properly */
+
+  border: 2px solid white;
+
+  display: block;       /* prevents weird spacing */
+}
+
+/* Hover effect */
+.profile-link img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255,255,255,0.7);
+}
