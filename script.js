@@ -1,5 +1,5 @@
 // ---------------- BACKGROUND ----------------
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", function () {
   const backgrounds = [
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920",
     "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?q=80&w=1920",
@@ -10,7 +10,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const randomIndex = Math.floor(Math.random() * backgrounds.length);
   const selectedImage = backgrounds[randomIndex];
 
-  document.body.style.backgroundImage = `url('${selectedImage}')`;
+  document.body.style.backgroundImage = "url('" + selectedImage + "')";
 });
 
 // ---------------- FILE DATA ----------------
@@ -28,16 +28,15 @@ async function loadFiles() {
 function displayFiles(files) {
   fileList.innerHTML = "";
 
-  files.forEach(file => {
-    fileList.innerHTML += `
-      <div class="file">
-        <div>
-          <strong>${file.name}</strong><br>
-          <small>${file.type} • ${file.category}</small>
-        </div>
-        <button onclick="openFile(${file.id})">View Details</button>
-      </div>
-    `;
+  files.forEach(function (file) {
+    fileList.innerHTML +=
+      '<div class="file">' +
+        '<div>' +
+          '<strong>' + file.name + '</strong><br>' +
+          '<small>' + file.type + ' • ' + file.category + '</small>' +
+        '</div>' +
+        '<button onclick="openFile(' + file.id + ')">View Details</button>' +
+      '</div>';
   });
 }
 
@@ -47,14 +46,16 @@ function openFile(id) {
 }
 
 // ---------------- SEARCH ----------------
-document.getElementById("search").addEventListener("input", (e) => {
+document.getElementById("search").addEventListener("input", function (e) {
   const value = e.target.value.toLowerCase();
 
-  const filtered = allFiles.filter(file =>
-    file.name.toLowerCase().includes(value) ||
-    file.category.toLowerCase().includes(value) ||
-    file.type.toLowerCase().includes(value)
-  );
+  const filtered = allFiles.filter(function (file) {
+    return (
+      file.name.toLowerCase().includes(value) ||
+      file.category.toLowerCase().includes(value) ||
+      file.type.toLowerCase().includes(value)
+    );
+  });
 
   displayFiles(filtered);
 });
@@ -64,7 +65,9 @@ function filterFiles(type) {
   if (type === "All") {
     displayFiles(allFiles);
   } else {
-    const filtered = allFiles.filter(file => file.type === type);
+    const filtered = allFiles.filter(function (file) {
+      return file.type === type;
+    });
     displayFiles(filtered);
   }
 }
@@ -79,7 +82,7 @@ if (localStorage.getItem("theme") === "dark") {
 }
 
 // Toggle theme
-toggleBtn.addEventListener("click", () => {
+toggleBtn.addEventListener("click", function () {
   document.body.classList.toggle("dark");
 
   if (document.body.classList.contains("dark")) {
