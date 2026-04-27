@@ -1,28 +1,30 @@
-const backgrounds = [
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-  "https://images.unsplash.com/photo-1493244040629-496f6d136cc3",
-  "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
-  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e"
-];
+// ---------------- BACKGROUND ----------------
+window.addEventListener("DOMContentLoaded", () => {
+  const backgrounds = [
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920",
+    "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?q=80&w=1920",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1920",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920"
+  ];
 
-function setRandomBackground() {
   const randomIndex = Math.floor(Math.random() * backgrounds.length);
   const selectedImage = backgrounds[randomIndex];
 
   document.body.style.backgroundImage = `url('${selectedImage}')`;
-}
+});
 
-setRandomBackground();
-
+// ---------------- FILE DATA ----------------
+let allFiles = [];
 const fileList = document.getElementById("fileList");
 
+// Load files
 async function loadFiles() {
   const res = await fetch("files.json");
-  const files = await res.json();
-
-  displayFiles(files);
+  allFiles = await res.json();
+  displayFiles(allFiles);
 }
 
+// Display files
 function displayFiles(files) {
   fileList.innerHTML = "";
 
@@ -39,14 +41,7 @@ function displayFiles(files) {
   });
 }
 
-let allFiles = [];
-
-async function loadFiles() {
-  const res = await fetch("files.json");
-  allFiles = await res.json();
-  displayFiles(allFiles);
-}
-
+// ---------------- SEARCH ----------------
 document.getElementById("search").addEventListener("input", (e) => {
   const value = e.target.value.toLowerCase();
 
@@ -59,8 +54,7 @@ document.getElementById("search").addEventListener("input", (e) => {
   displayFiles(filtered);
 });
 
-loadFiles();
-
+// ---------------- FILTER ----------------
 function filterFiles(type) {
   if (type === "All") {
     displayFiles(allFiles);
@@ -70,22 +64,27 @@ function filterFiles(type) {
   }
 }
 
+// ---------------- DARK MODE ----------------
 const toggleBtn = document.getElementById("themeToggle");
 
 // Load saved theme
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
-  toggleBtn.textContent = "☀️ Light Mode";
+  toggleBtn.textContent = "☀️";
 }
 
+// Toggle theme
 toggleBtn.addEventListener("click", () => {
   document.body.classList.toggle("dark");
 
   if (document.body.classList.contains("dark")) {
     localStorage.setItem("theme", "dark");
-    toggleBtn.textContent = "☀️ Light Mode";
+    toggleBtn.textContent = "☀️";
   } else {
     localStorage.setItem("theme", "light");
-    toggleBtn.textContent = "🌙 Dark Mode";
+    toggleBtn.textContent = "🌙";
   }
 });
+
+// INIT
+loadFiles();
