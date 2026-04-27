@@ -1,43 +1,41 @@
+/* BODY */
 body {
   font-family: Arial;
   background: #f4f6f9;
+  margin: 0;
+  transition: 0.3s;
 }
 
+/* CONTAINER */
 .container {
   width: 600px;
   margin: auto;
   margin-top: 50px;
 }
 
-h1 {
-  text-align: center;
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+/* TITLE */
+h1 {
+  margin: 0;
+}
+
+/* SEARCH */
 #search {
   width: 100%;
   padding: 10px;
   margin: 20px 0;
   border-radius: 8px;
   border: 1px solid #ccc;
+  transition: 0.3s;
 }
 
-.file {
-  background: white;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.file a {
-  text-decoration: none;
-  background: #007bff;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-}
-
+/* FILE CARD */
 .file {
   background: white;
   padding: 15px;
@@ -53,6 +51,7 @@ h1 {
   transform: scale(1.02);
 }
 
+/* DOWNLOAD BUTTON */
 .file a {
   text-decoration: none;
   background: #007bff;
@@ -61,6 +60,7 @@ h1 {
   border-radius: 6px;
 }
 
+/* FILTERS */
 .filters {
   display: flex;
   gap: 10px;
@@ -73,18 +73,49 @@ h1 {
   background: #eee;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
+/* THEME BUTTON */
 #themeToggle {
   padding: 6px 12px;
   border: none;
   background: #ddd;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+/* ========================= */
+/* 🌙 DARK MODE STYLES */
+/* ========================= */
+
+body.dark {
+  background: #121212;
+  color: #ffffff;
+}
+
+/* FILE CARDS */
+body.dark .file {
+  background: #1e1e1e;
+  color: white;
+}
+
+/* SEARCH */
+body.dark #search {
+  background: #1e1e1e;
+  color: white;
+  border: 1px solid #555;
+}
+
+/* FILTER BUTTONS */
+body.dark .filters button {
+  background: #333;
+  color: white;
+}
+
+/* THEME BUTTON */
+body.dark #themeToggle {
+  background: #333;
+  color: white;
 }
