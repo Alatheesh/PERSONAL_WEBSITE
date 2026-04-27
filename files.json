@@ -1,14 +1,18 @@
 [
   {
+    "id": 1,
     "name": "Math Notes",
     "link": "https://example.com/math.pdf",
     "type": "PDF",
-    "category": "EEE"
+    "category": "EEE",
+    "description": "Important formulas and notes for exams"
   },
   {
+    "id": 2,
     "name": "Physics Video",
     "link": "https://example.com/video",
     "type": "Video",
-    "category": "Physics"
+    "category": "Physics",
+    "description": "Concept explanation video"
   }
 ]
