@@ -44,3 +44,12 @@ document.getElementById("search").addEventListener("input", (e) => {
 });
 
 loadFiles();
+
+function filterFiles(type) {
+  if (type === "All") {
+    displayFiles(allFiles);
+  } else {
+    const filtered = allFiles.filter(file => file.type === type);
+    displayFiles(filtered);
+  }
+}
