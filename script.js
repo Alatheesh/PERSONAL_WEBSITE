@@ -24,7 +24,7 @@ async function loadFiles() {
   displayFiles(allFiles);
 }
 
-// Display files
+// ---------------- DISPLAY FILES ----------------
 function displayFiles(files) {
   fileList.innerHTML = "";
 
@@ -35,10 +35,15 @@ function displayFiles(files) {
           <strong>${file.name}</strong><br>
           <small>${file.type} • ${file.category}</small>
         </div>
-        <a href="${file.link}" target="_blank">Download</a>
+        <button onclick="openFile(${file.id})">View Details</button>
       </div>
     `;
   });
+}
+
+// ---------------- NAVIGATION ----------------
+function openFile(id) {
+  window.location.href = \`file.html?id=\${id}\`;
 }
 
 // ---------------- SEARCH ----------------
@@ -86,5 +91,5 @@ toggleBtn.addEventListener("click", () => {
   }
 });
 
-// INIT
+// ---------------- INIT ----------------
 loadFiles();
