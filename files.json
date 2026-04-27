@@ -2,17 +2,13 @@
   {
     "id": 1,
     "name": "Math Notes",
-    "link": "https://example.com/math.pdf",
     "type": "PDF",
     "category": "EEE",
-    "description": "Important formulas and notes for exams"
-  },
-  {
-    "id": 2,
-    "name": "Physics Video",
-    "link": "https://example.com/video",
-    "type": "Video",
-    "category": "Physics",
-    "description": "Concept explanation video"
+    "description": "Important formulas and concepts.",
+    "image": "https://via.placeholder.com/300x400",
+    "downloads": [
+      "https://example.com/file1.pdf",
+      "https://example.com/file2.pdf"
+    ]
   }
 ]
