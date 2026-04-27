@@ -165,3 +165,42 @@ body.dark #themeToggle {
   background: rgba(30, 30, 30, 0.4);
   color: white;
 }
+
+.details-page {
+  text-align: center;
+}
+
+.preview img {
+  width: 250px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.info {
+  margin: 15px 0;
+}
+
+.download-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  width: 60%;
+  background: #ff5500;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.download-btn:hover {
+  transform: scale(1.05);
+}
+
+.nav-buttons {
+  margin-top: 20px;
+}
+
+.nav-buttons button {
+  margin: 5px;
+  padding: 10px 15px;
+}
