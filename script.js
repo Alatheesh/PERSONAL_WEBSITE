@@ -1,3 +1,19 @@
+const backgrounds = [
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+  "https://images.unsplash.com/photo-1493244040629-496f6d136cc3",
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
+  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e"
+];
+
+function setRandomBackground() {
+  const randomIndex = Math.floor(Math.random() * backgrounds.length);
+  const selectedImage = backgrounds[randomIndex];
+
+  document.body.style.backgroundImage = `url('${selectedImage}')`;
+}
+
+setRandomBackground();
+
 const fileList = document.getElementById("fileList");
 
 async function loadFiles() {
