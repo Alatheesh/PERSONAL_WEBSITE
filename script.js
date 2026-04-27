@@ -23,4 +23,24 @@ function displayFiles(files) {
   });
 }
 
+let allFiles = [];
+
+async function loadFiles() {
+  const res = await fetch("files.json");
+  allFiles = await res.json();
+  displayFiles(allFiles);
+}
+
+document.getElementById("search").addEventListener("input", (e) => {
+  const value = e.target.value.toLowerCase();
+
+  const filtered = allFiles.filter(file =>
+    file.name.toLowerCase().includes(value) ||
+    file.category.toLowerCase().includes(value) ||
+    file.type.toLowerCase().includes(value)
+  );
+
+  displayFiles(filtered);
+});
+
 loadFiles();
