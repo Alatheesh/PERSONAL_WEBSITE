@@ -1,34 +1,26 @@
-const files = [
-  { name: "Math Notes", link: "https://example.com/math.pdf" },
-  { name: "Physics Notes", link: "https://example.com/physics.pdf" },
-  { name: "EEE Questions", link: "https://example.com/eee.pdf" }
-];
-
 const fileList = document.getElementById("fileList");
 
-function showFiles(data) {
+async function loadFiles() {
+  const res = await fetch("files.json");
+  const files = await res.json();
+
+  displayFiles(files);
+}
+
+function displayFiles(files) {
   fileList.innerHTML = "";
 
-  data.forEach(file => {
+  files.forEach(file => {
     fileList.innerHTML += `
       <div class="file">
-        <span>${file.name}</span>
+        <div>
+          <strong>${file.name}</strong><br>
+          <small>${file.type} • ${file.category}</small>
+        </div>
         <a href="${file.link}" target="_blank">Download</a>
       </div>
     `;
   });
 }
 
-showFiles(files);
-
-const search = document.getElementById("search");
-
-search.addEventListener("input", () => {
-  const value = search.value.toLowerCase();
-
-  const filtered = files.filter(file =>
-    file.name.toLowerCase().includes(value)
-  );
-
-  showFiles(filtered);
-});
+loadFiles();
