@@ -7,17 +7,26 @@
 <body>
 
   <div class="container">
-    <h1>📁 File Hub</h1>
-    <button id="themeToggle">🌙 Dark Mode</button>
 
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <h1>📁 File Hub</h1>
+      <button id="themeToggle">🌙</button>
+    </div>
+
+    <!-- SEARCH -->
     <input type="text" id="search" placeholder="Search files...">
 
+    <!-- FILTERS -->
     <div class="filters">
       <button onclick="filterFiles('All')">All</button>
       <button onclick="filterFiles('PDF')">PDF</button>
       <button onclick="filterFiles('Video')">Video</button>
     </div>
+
+    <!-- FILE LIST -->
     <div id="fileList"></div>
+
   </div>
 
   <script src="script.js"></script>
