@@ -27,13 +27,13 @@ body.dark {
   color: #ffffff;
 }
 
-/* CONTAINER (NOW TRANSPARENT) */
+/* CONTAINER */
 .container {
   width: 600px;
   margin: auto;
   margin-top: 50px;
 
-  background: transparent; /* 👈 IMPORTANT */
+  background: transparent;
   padding: 20px;
 }
 
@@ -49,7 +49,29 @@ h1 {
   margin: 0;
 }
 
-/* SEARCH (GLASS EFFECT) */
+/* 🔙 BACK BUTTON */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+
+  z-index: 10;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  transform: scale(1.1);
+}
+
+/* SEARCH */
 #search {
   width: 100%;
   padding: 10px;
@@ -63,13 +85,12 @@ h1 {
   transition: 0.3s;
 }
 
-/* DARK SEARCH */
 body.dark #search {
   background: rgba(30, 30, 30, 0.4);
   color: white;
 }
 
-/* FILE CARD (GLASS EFFECT) */
+/* FILE CARD */
 .file {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(8px);
@@ -85,32 +106,29 @@ body.dark #search {
   transition: all 0.3s ease;
 }
 
-/* HOVER ANIMATION */
 .file:hover {
   transform: translateY(-5px) scale(1.02);
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
-/* DARK FILE CARD */
 body.dark .file {
   background: rgba(30, 30, 30, 0.4);
   color: white;
 }
 
-/* DOWNLOAD BUTTON */
-.file a {
-  text-decoration: none;
+/* BUTTON INSIDE FILE */
+.file button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
   background: #007bff;
   color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.file a:hover {
+.file button:hover {
   transform: scale(1.05);
-  opacity: 0.9;
 }
 
 /* FILTERS */
@@ -120,7 +138,6 @@ body.dark .file {
   margin-bottom: 10px;
 }
 
-/* FILTER BUTTONS (GLASS) */
 .filters button {
   padding: 8px 12px;
   border: none;
@@ -137,7 +154,6 @@ body.dark .file {
   transform: scale(1.05);
 }
 
-/* DARK FILTERS */
 body.dark .filters button {
   background: rgba(30, 30, 30, 0.4);
   color: white;
@@ -160,12 +176,36 @@ body.dark .filters button {
   transform: scale(1.05);
 }
 
-/* DARK BUTTON */
 body.dark #themeToggle {
   background: rgba(30, 30, 30, 0.4);
   color: white;
 }
 
+/* ---------------- PAGINATION ---------------- */
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+
+  background: rgba(0, 123, 255, 0.8);
+  color: white;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.pagination button:hover {
+  transform: scale(1.1);
+  background: rgba(0, 86, 179, 0.9);
+}
+
+/* ---------------- DETAILS PAGE ---------------- */
 .details-page {
   text-align: center;
 }
@@ -203,4 +243,27 @@ body.dark #themeToggle {
 .nav-buttons button {
   margin: 5px;
   padding: 10px 15px;
+}
+
+/* ---------------- MOBILE FIX ---------------- */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    margin-top: 20px;
+  }
+
+  .file {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .file button {
+    width: 100%;
+  }
+
+  .back-btn {
+    top: 10px;
+    right: 10px;
+  }
 }
