@@ -10,7 +10,8 @@ body {
   justify-content: center;
   align-items: center;
 
-  position: relative; /* 🔥 IMPORTANT FIX */
+  position: relative;
+  overflow: hidden;
 }
 
 /* 🌫️ OVERLAY */
@@ -19,45 +20,85 @@ body::before {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.55);
   top: 0;
   left: 0;
-  z-index: 0; /* 🔥 ensures content appears above */
+  z-index: 0;
 }
 
-/* CENTER CONTENT */
+/* 🔥 HERO CARD */
 .hero {
   position: relative;
   text-align: center;
   color: white;
-  z-index: 1; /* 🔥 bring above overlay */
+  z-index: 1;
 }
 
-.hero h1 {
-  font-size: 50px;
+/* 💎 GLASS CARD */
+.glass-card {
+  padding: 40px 50px;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+
+  box-shadow: 0 0 40px rgba(0, 123, 255, 0.25);
+
+  animation: float 6s ease-in-out infinite;
+}
+
+/* FLOAT ANIMATION */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 🌈 GLOW BORDER */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+
+  background: linear-gradient(45deg, #007bff, #00d4ff, #007bff);
+  z-index: -1;
+
+  filter: blur(15px);
+  opacity: 0.6;
+}
+
+/* TITLE */
+#typingText {
+  font-size: 48px;
   margin-bottom: 10px;
 }
 
-.hero p {
+/* SUBTITLE */
+.subtitle {
   font-size: 18px;
-  margin-bottom: 20px;
+  opacity: 0.9;
+  margin-bottom: 25px;
 }
 
-/* BUTTON */
-.hero button {
-  padding: 12px 20px;
+/* 🔥 PREMIUM BUTTON */
+.premium-btn {
+  padding: 14px 26px;
   font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  background: #007bff;
-  color: white;
-  cursor: pointer;
 
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.hero button:hover {
-  transform: scale(1.05);
+.premium-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(0,123,255,0.6);
 }
 
 /* FOOTER */
@@ -98,7 +139,7 @@ body::before {
   box-shadow: 0 0 12px rgba(255,255,255,0.7);
 }
 
-/* 🔥 VISITOR BOX (TOP RIGHT) */
+/* 🔥 VISITOR BOX */
 #visitorBox {
   position: fixed;
   top: 20px;
@@ -123,4 +164,23 @@ body::before {
 #visitorBox:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* 📱 MOBILE FIX */
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 25px 20px;
+  }
+
+  #typingText {
+    font-size: 32px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .premium-btn {
+    width: 100%;
+  }
 }
