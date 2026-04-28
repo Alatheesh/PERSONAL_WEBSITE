@@ -15,6 +15,9 @@ window.addEventListener("DOMContentLoaded", function () {
 
 // ---------------- FILE DATA ----------------
 let allFiles = [];
+let currentPage = 1;
+const itemsPerPage = 10;
+
 const fileList = document.getElementById("fileList");
 
 // Load files
@@ -24,11 +27,16 @@ async function loadFiles() {
   displayFiles(allFiles);
 }
 
-// ---------------- DISPLAY FILES ----------------
+// ---------------- DISPLAY FILES (WITH PAGINATION) ----------------
 function displayFiles(files) {
   fileList.innerHTML = "";
 
-  files.forEach(function (file) {
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+
+  const paginatedFiles = files.slice(start, end);
+
+  paginatedFiles.forEach(function (file) {
     fileList.innerHTML +=
       '<div class="file">' +
         '<div>' +
@@ -38,6 +46,29 @@ function displayFiles(files) {
         '<button onclick="openFile(' + file.id + ')">View Details</button>' +
       '</div>';
   });
+
+  createPagination(files.length, files);
+}
+
+// ---------------- PAGINATION ----------------
+function createPagination(totalItems, files) {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  let html = '<div class="pagination">';
+
+  for (let i = 1; i <= totalPages; i++) {
+    html +=
+      '<button onclick="goToPage(' + i + ')">' + i + '</button>';
+  }
+
+  html += '</div>';
+
+  fileList.innerHTML += html;
+}
+
+function goToPage(page) {
+  currentPage = page;
+  displayFiles(allFiles);
 }
 
 // ---------------- NAVIGATION ----------------
@@ -45,9 +76,16 @@ function openFile(id) {
   window.location.href = "file.html?id=" + id;
 }
 
+// 🔙 BACK BUTTON FUNCTION
+function goHome() {
+  window.location.href = "index.html";
+}
+
 // ---------------- SEARCH ----------------
 document.getElementById("search").addEventListener("input", function (e) {
   const value = e.target.value.toLowerCase();
+
+  currentPage = 1; // reset page
 
   const filtered = allFiles.filter(function (file) {
     return (
@@ -62,6 +100,8 @@ document.getElementById("search").addEventListener("input", function (e) {
 
 // ---------------- FILTER ----------------
 function filterFiles(type) {
+  currentPage = 1; // reset page
+
   if (type === "All") {
     displayFiles(allFiles);
   } else {
