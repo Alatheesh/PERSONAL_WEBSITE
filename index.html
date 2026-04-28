@@ -35,10 +35,10 @@ function goToApp() {
 }
 </script>
 
-<!-- 🔥 FIREBASE VISITOR COUNTER -->
+<!-- 🔥 FIREBASE VISITOR COUNTER (FINAL STABLE VERSION) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnPwFPYYdWJ4FuBnvL0CpgzVxo9YyRMGg",
@@ -51,55 +51,30 @@ const db = getFirestore(app);
 
 const ref = doc(db, "stats", "visitors");
 
-// ✅ Prevent double counting in same session
-if (!sessionStorage.getItem("visited")) {
-  sessionStorage.setItem("visited", "true");
+async function updateCounter() {
+  try {
+    // 🔥 Safe atomic increment
+    await setDoc(ref, { count: increment(1) }, { merge: true });
 
-  async function updateCounter() {
-    try {
-      const snap = await getDoc(ref);
+    // 🔥 Read updated value
+    const snap = await getDoc(ref);
 
-      if (snap.exists()) {
-        let count = snap.data().count || 0;
-        count++;
-
-        await updateDoc(ref, { count });
-
-        document.getElementById("visitorCount").innerText =
-          "👁 Visitors: " + count;
-      } else {
-        await setDoc(ref, { count: 1 });
-
-        document.getElementById("visitorCount").innerText =
-          "👁 Visitors: 1";
-      }
-
-    } catch (error) {
-      console.error(error);
+    if (snap.exists()) {
       document.getElementById("visitorCount").innerText =
-        "👁 Visitors: error";
-    }
-  }
-
-  updateCounter();
-
-} else {
-  // Just show count without increasing
-  async function showCount() {
-    try {
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        document.getElementById("visitorCount").innerText =
-          "👁 Visitors: " + snap.data().count;
-      }
-    } catch {
+        "👁 Visitors: " + snap.data().count;
+    } else {
       document.getElementById("visitorCount").innerText =
-        "👁 Visitors: error";
+        "👁 Visitors: 1";
     }
-  }
 
-  showCount();
+  } catch (error) {
+    console.error("Firebase error:", error);
+    document.getElementById("visitorCount").innerText =
+      "👁 Visitors: error";
+  }
 }
+
+updateCounter();
 </script>
 
 </body>
