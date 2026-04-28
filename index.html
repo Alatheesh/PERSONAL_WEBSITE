@@ -34,13 +34,19 @@ function goToApp() {
   window.location.href = "search.html"; 
 }
 
-// 👁 VISITOR COUNTER SCRIPT
-fetch("https://api.countapi.xyz/hit/latheesh-filehub-main/visits")
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("visitorCount").innerText =
-      "👁 Visitors: " + data.value;
-  });
+// 👁 VISITOR COUNTER (FIXED)
+window.addEventListener("DOMContentLoaded", function () {
+  fetch("https://api.countapi.xyz/hit/latheesh-filehub-main/visits")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("visitorCount").innerText =
+        "👁 Visitors: " + data.value;
+    })
+    .catch(() => {
+      document.getElementById("visitorCount").innerText =
+        "Visitors unavailable";
+    });
+});
 </script>
 
 </body>
