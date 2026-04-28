@@ -2,6 +2,7 @@
 window.addEventListener("DOMContentLoaded", function () {
   const backgrounds = [
     "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
+    "https://images8.alphacoders.com/912/thumb-1920-912051.jpg",
     "https://fanart.fanabyss.com/657/thumb-Naruto-87.jpg"
   ];
 
