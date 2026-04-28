@@ -34,10 +34,15 @@ function goToApp() {
   window.location.href = "search.html"; 
 }
 
-// 👁 VISITOR COUNTER (WORKING VERSION)
+// 👁 VISITOR COUNTER (FIXED + NO CACHE)
 window.addEventListener("DOMContentLoaded", function () {
-  fetch("https://countapi.xyz/hit/latheesh-filehub-main/visits")
-    .then(res => res.json())
+  const url = "https://countapi.xyz/hit/latheesh-filehub-main/visits?rand=" + Math.random();
+
+  fetch(url, { cache: "no-store" })
+    .then(res => {
+      if (!res.ok) throw new Error("API failed");
+      return res.json();
+    })
     .then(data => {
       document.getElementById("visitorCount").innerText =
         "👁 Visitors: " + data.value;
