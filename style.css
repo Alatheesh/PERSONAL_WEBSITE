@@ -8,13 +8,14 @@ body {
   font-family: Arial;
   margin: 0;
 
-  min-height: 100vh;
+  min-height: 100dvh; /* 🔥 FIX (not 100vh) */
   display: flex;
   flex-direction: column;
 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-attachment: fixed; /* 🔥 improves mobile */
 
   transition: background 0.3s, color 0.3s;
 }
@@ -45,7 +46,8 @@ body.dark {
   background: transparent;
   padding: 20px;
 
-  flex: 1; /* 🔥 KEY FIX */
+  flex: 1;
+  min-height: calc(100dvh - 80px); /* 🔥 forces full height */
 }
 
 /* TOP BAR */
@@ -262,6 +264,7 @@ body.dark #themeToggle {
     width: 95%;
     margin-top: 20px;
     flex: 1;
+    min-height: calc(100dvh - 60px); /* 🔥 fix mobile gap */
   }
 
   .file {
