@@ -1,7 +1,7 @@
 // ---------------- BACKGROUND ----------------
 window.addEventListener("DOMContentLoaded", function () {
   const backgrounds = [
-    "https://th.wallhaven.cc/small/8x/8xlylk.jpg",
+    "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
     "https://fanart.fanabyss.com/657/thumb-Naruto-87.jpg"
   ];
 
