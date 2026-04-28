@@ -1,3 +1,4 @@
+/* BODY */
 body {
   margin: 0;
   font-family: Arial;
@@ -8,9 +9,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  position: relative; /* 🔥 IMPORTANT FIX */
 }
 
-/* overlay */
+/* 🌫️ OVERLAY */
 body::before {
   content: "";
   position: fixed;
@@ -19,13 +22,15 @@ body::before {
   background: rgba(0,0,0,0.5);
   top: 0;
   left: 0;
+  z-index: 0; /* 🔥 ensures content appears above */
 }
 
-/* center content */
+/* CENTER CONTENT */
 .hero {
   position: relative;
   text-align: center;
   color: white;
+  z-index: 1; /* 🔥 bring above overlay */
 }
 
 .hero h1 {
@@ -38,7 +43,7 @@ body::before {
   margin-bottom: 20px;
 }
 
-/* button */
+/* BUTTON */
 .hero button {
   padding: 12px 20px;
   font-size: 16px;
@@ -68,7 +73,7 @@ body::before {
   z-index: 2;
 }
 
-/* PROFILE IMAGE FIX */
+/* PROFILE IMAGE */
 .profile-link {
   position: fixed;
   top: 20px;
@@ -77,18 +82,45 @@ body::before {
 }
 
 .profile-link img {
-  width: 60px;          /* control size */
-  height: 60px;         /* make square */
-  border-radius: 50%;   /* circle */
-  object-fit: cover;    /* crop properly */
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
 
   border: 2px solid white;
 
-  display: block;       /* prevents weird spacing */
+  display: block;
+  transition: 0.3s;
 }
 
-/* Hover effect */
 .profile-link img:hover {
   transform: scale(1.1);
   box-shadow: 0 0 12px rgba(255,255,255,0.7);
+}
+
+/* 🔥 VISITOR BOX (TOP RIGHT) */
+#visitorBox {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  padding: 8px 14px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+
+  z-index: 10;
+  transition: 0.3s;
+}
+
+#visitorBox:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
