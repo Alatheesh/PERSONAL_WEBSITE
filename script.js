@@ -2,7 +2,7 @@
 window.addEventListener("DOMContentLoaded", function () {
   const backgrounds = [
     "https://th.wallhaven.cc/small/8x/8xlylk.jpg",
-    "https://th.wallhaven.cc/small/2k/2k73wm.jpg"
+    "https://fanart.fanabyss.com/657/thumb-Naruto-87.jpg"
   ];
 
   const randomIndex = Math.floor(Math.random() * backgrounds.length);
