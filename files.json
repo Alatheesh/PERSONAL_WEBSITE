@@ -1,15 +1,12 @@
 [
   {
-    "id": 3,
+    "id": 1,
     "name": "Math Notes",
     "type": "PDF",
     "category": "EEE",
     "description": "Important formulas and concepts for exams and quick revision.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/file1.pdf",
-      "https://example.com/file2.pdf"
-    ]
+    "downloads": ["https://example.com/file1.pdf","https://example.com/file2.pdf"]
   },
   {
     "id": 2,
@@ -18,21 +15,124 @@
     "category": "Physics",
     "description": "Collection of important physics formulas and derivations.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/physics1.pdf",
-      "https://example.com/physics2.pdf"
-    ]
+    "downloads": ["https://example.com/physics1.pdf","https://example.com/physics2.pdf"]
   },
   {
-    "id": 1,
+    "id": 3,
     "name": "Electrical Machines Notes",
     "type": "PDF",
     "category": "EEE",
     "description": "Detailed notes on transformers, motors, and generators.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/electrical1.pdf",
-      "https://example.com/electrical2.pdf"
-    ]
+    "downloads": ["https://example.com/electrical1.pdf","https://example.com/electrical2.pdf"]
+  },
+
+  {
+    "id": 4,
+    "name": "Digital Electronics",
+    "type": "PDF",
+    "category": "EEE",
+    "description": "Logic gates, flip-flops and circuits.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/digital1.pdf"]
+  },
+  {
+    "id": 5,
+    "name": "Control Systems",
+    "type": "PDF",
+    "category": "EEE",
+    "description": "Control theory basics and systems.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/control.pdf"]
+  },
+  {
+    "id": 6,
+    "name": "Signals and Systems",
+    "type": "PDF",
+    "category": "EEE",
+    "description": "Signal analysis and transforms.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/signals.pdf"]
+  },
+  {
+    "id": 7,
+    "name": "Power Systems",
+    "type": "PDF",
+    "category": "EEE",
+    "description": "Transmission and distribution.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/power.pdf"]
+  },
+  {
+    "id": 8,
+    "name": "Thermodynamics Notes",
+    "type": "PDF",
+    "category": "Physics",
+    "description": "Heat and energy systems.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/thermo.pdf"]
+  },
+  {
+    "id": 9,
+    "name": "Quantum Physics",
+    "type": "PDF",
+    "category": "Physics",
+    "description": "Quantum theory basics.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/quantum.pdf"]
+  },
+  {
+    "id": 10,
+    "name": "Engineering Mechanics",
+    "type": "PDF",
+    "category": "Mechanical",
+    "description": "Forces and motion.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/mechanics.pdf"]
+  },
+  {
+    "id": 11,
+    "name": "Fluid Mechanics",
+    "type": "PDF",
+    "category": "Mechanical",
+    "description": "Fluid flow concepts.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/fluid.pdf"]
+  },
+  {
+    "id": 12,
+    "name": "Data Structures",
+    "type": "PDF",
+    "category": "CSE",
+    "description": "Stacks, queues, trees.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/ds.pdf"]
+  },
+  {
+    "id": 13,
+    "name": "Operating Systems",
+    "type": "PDF",
+    "category": "CSE",
+    "description": "Processes, memory management.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/os.pdf"]
+  },
+  {
+    "id": 14,
+    "name": "Computer Networks",
+    "type": "PDF",
+    "category": "CSE",
+    "description": "Protocols and networking basics.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/network.pdf"]
+  },
+  {
+    "id": 15,
+    "name": "Database Systems",
+    "type": "PDF",
+    "category": "CSE",
+    "description": "SQL and DB concepts.",
+    "image": "https://i.ibb.co/zVghvnXB/download.png",
+    "downloads": ["https://example.com/db.pdf"]
   }
 ]
