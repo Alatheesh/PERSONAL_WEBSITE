@@ -35,7 +35,7 @@ function goToApp() {
 }
 </script>
 
-<!-- 🔥 FIREBASE (SAFE + STABLE VERSION) -->
+<!-- 🔥 FIREBASE (DAILY UNIQUE VISITOR VERSION) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -43,13 +43,14 @@ function goToApp() {
 window.addEventListener("DOMContentLoaded", function () {
 
   try {
+    const today = new Date().toLocaleDateString();
+
     const firebaseConfig = {
       apiKey: "AIzaSyBnPwFPYYdWJ4FuBnvL0CpgzVxo9YyRMGg",
       authDomain: "filehub-counter.firebaseapp.com",
       projectId: "filehub-counter"
     };
 
-    // Prevent double initialization
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
@@ -57,28 +58,33 @@ window.addEventListener("DOMContentLoaded", function () {
     const db = firebase.firestore();
     const ref = db.collection("stats").doc("visitors");
 
-    // 🔥 Increment counter safely
-    ref.set({
-      count: firebase.firestore.FieldValue.increment(1)
-    }, { merge: true })
-    .then(() => ref.get())
-    .then(doc => {
-      if (doc.exists) {
+    const lastVisit = localStorage.getItem("lastVisitDate");
+
+    // ✅ Count only once per day
+    if (lastVisit !== today) {
+
+      ref.set({
+        count: firebase.firestore.FieldValue.increment(1)
+      }, { merge: true })
+      .then(() => {
+        localStorage.setItem("lastVisitDate", today);
+        return ref.get();
+      })
+      .then(doc => {
         document.getElementById("visitorCount").innerText =
           "👁 Visitors: " + doc.data().count;
-      } else {
+      });
+
+    } else {
+      // 👁 Just show count
+      ref.get().then(doc => {
         document.getElementById("visitorCount").innerText =
-          "👁 Visitors: 1";
-      }
-    })
-    .catch(err => {
-      console.error("Firebase error:", err);
-      document.getElementById("visitorCount").innerText =
-        "⚠️ Visitors unavailable";
-    });
+          "👁 Visitors: " + doc.data().count;
+      });
+    }
 
   } catch (e) {
-    console.error("Init error:", e);
+    console.error("Error:", e);
     document.getElementById("visitorCount").innerText =
       "⚠️ Visitors unavailable";
   }
