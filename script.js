@@ -27,10 +27,11 @@ async function loadFiles() {
   displayFiles(allFiles);
 }
 
-// ---------------- DISPLAY FILES (WITH PAGINATION) ----------------
+// ---------------- DISPLAY FILES ----------------
 function displayFiles(files) {
   fileList.innerHTML = "";
 
+  const totalItems = files.length;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
 
@@ -47,26 +48,44 @@ function displayFiles(files) {
       '</div>';
   });
 
-  createPagination(files.length, files);
+  createPagination(files);
 }
 
 // ---------------- PAGINATION ----------------
-function createPagination(totalItems, files) {
+function createPagination(files) {
+  const totalItems = files.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   let html = '<div class="pagination">';
 
+  // 📊 FILE COUNT
+  html += '<p class="page-info">Showing ' + startItem + '–' + endItem + ' of ' + totalItems + ' files</p>';
+
+  // ⏮ PREV BUTTON
+  html += '<button onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>← Prev</button>';
+
+  // 🔢 PAGE NUMBERS
   for (let i = 1; i <= totalPages; i++) {
-    html +=
-      '<button onclick="goToPage(' + i + ')">' + i + '</button>';
+    html += '<button class="' + (i === currentPage ? 'active-page' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
   }
+
+  // ⏭ NEXT BUTTON
+  html += '<button onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '>Next →</button>';
 
   html += '</div>';
 
   fileList.innerHTML += html;
 }
 
+// ---------------- PAGE SWITCH ----------------
 function goToPage(page) {
+  const totalPages = Math.ceil(allFiles.length / itemsPerPage);
+
+  if (page < 1 || page > totalPages) return;
+
   currentPage = page;
   displayFiles(allFiles);
 }
@@ -76,7 +95,7 @@ function openFile(id) {
   window.location.href = "file.html?id=" + id;
 }
 
-// 🔙 BACK BUTTON FUNCTION
+// 🔙 BACK BUTTON
 function goHome() {
   window.location.href = "index.html";
 }
@@ -85,7 +104,7 @@ function goHome() {
 document.getElementById("search").addEventListener("input", function (e) {
   const value = e.target.value.toLowerCase();
 
-  currentPage = 1; // reset page
+  currentPage = 1;
 
   const filtered = allFiles.filter(function (file) {
     return (
@@ -100,7 +119,7 @@ document.getElementById("search").addEventListener("input", function (e) {
 
 // ---------------- FILTER ----------------
 function filterFiles(type) {
-  currentPage = 1; // reset page
+  currentPage = 1;
 
   if (type === "All") {
     displayFiles(allFiles);
@@ -115,13 +134,11 @@ function filterFiles(type) {
 // ---------------- DARK MODE ----------------
 const toggleBtn = document.getElementById("themeToggle");
 
-// Load saved theme
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
   toggleBtn.textContent = "☀️";
 }
 
-// Toggle theme
 toggleBtn.addEventListener("click", function () {
   document.body.classList.toggle("dark");
 
