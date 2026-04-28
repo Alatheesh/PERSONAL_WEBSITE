@@ -38,11 +38,26 @@ async function loadFile() {
       </a>
     `;
   });
+
+  // 🔥 HANDLE PREVIOUS / NEXT VISIBILITY
+  const prevBtn = document.querySelector(".nav-buttons button:first-child");
+  const nextBtn = document.querySelector(".nav-buttons button:last-child");
+
+  const hasPrev = allFiles.some(f => f.id === id - 1);
+  const hasNext = allFiles.some(f => f.id === id + 1);
+
+  if (!hasPrev) {
+    prevBtn.style.display = "none";
+  }
+
+  if (!hasNext) {
+    nextBtn.style.display = "none";
+  }
 }
 
-// 🔙 Back to previous page (search page with state)
+// 🔙 Back to 2nd page (FIXED)
 function goBack() {
-  window.history.back();
+  window.location.href = "search.html";
 }
 
 // ⬅️ Previous file
