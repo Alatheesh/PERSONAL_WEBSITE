@@ -35,46 +35,43 @@ function goToApp() {
 }
 </script>
 
-<!-- 🔥 FIREBASE VISITOR COUNTER (FINAL STABLE VERSION) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<!-- 🔥 FIREBASE (COMPAT VERSION - STABLE) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyBnPwFPYYdWJ4FuBnvL0CpgzVxo9YyRMGg",
   authDomain: "filehub-counter.firebaseapp.com",
   projectId: "filehub-counter"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-const ref = doc(db, "stats", "visitors");
+// Reference
+const ref = db.collection("stats").doc("visitors");
 
-async function updateCounter() {
-  try {
-    // 🔥 Safe atomic increment
-    await setDoc(ref, { count: increment(1) }, { merge: true });
-
-    // 🔥 Read updated value
-    const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-      document.getElementById("visitorCount").innerText =
-        "👁 Visitors: " + snap.data().count;
-    } else {
-      document.getElementById("visitorCount").innerText =
-        "👁 Visitors: 1";
-    }
-
-  } catch (error) {
-    console.error("Firebase error:", error);
+// 🔥 Visitor Counter (SAFE)
+ref.set({
+  count: firebase.firestore.FieldValue.increment(1)
+}, { merge: true })
+.then(() => ref.get())
+.then(doc => {
+  if (doc.exists) {
     document.getElementById("visitorCount").innerText =
-      "👁 Visitors: error";
+      "👁 Visitors: " + doc.data().count;
+  } else {
+    document.getElementById("visitorCount").innerText =
+      "👁 Visitors: 1";
   }
-}
-
-updateCounter();
+})
+.catch(err => {
+  console.error("Firebase error:", err);
+  document.getElementById("visitorCount").innerText =
+    "👁 Visitors: error";
+});
 </script>
 
 </body>
