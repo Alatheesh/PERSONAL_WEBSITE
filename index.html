@@ -17,6 +17,9 @@
   <h1>📁 File Hub</h1>
   <p>Store and access your files easily</p>
 
+  <!-- 👁 VISITOR COUNT -->
+  <p id="visitorCount">Loading visitors...</p>
+
   <button onclick="goToApp()">Get Started</button>
 
 </div>
@@ -30,6 +33,14 @@
 function goToApp() {
   window.location.href = "search.html"; 
 }
+
+// 👁 VISITOR COUNTER SCRIPT
+fetch("https://api.countapi.xyz/hit/latheesh-filehub-main/visits")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("visitorCount").innerText =
+      "👁 Visitors: " + data.value;
+  });
 </script>
 
 </body>
