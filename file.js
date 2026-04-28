@@ -54,3 +54,8 @@ function goNext() {
 }
 
 loadFile();
+
+//previous page
+function goBack() {
+  window.history.back();
+}
