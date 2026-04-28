@@ -1,7 +1,16 @@
+/* FULL HEIGHT FIX */
+html, body {
+  height: 100%;
+}
+
 /* BODY */
 body {
   font-family: Arial;
   margin: 0;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 
   background-size: cover;
   background-position: center;
@@ -22,7 +31,7 @@ body::before {
   z-index: -1;
 }
 
-/* DARK MODE BODY */
+/* DARK MODE */
 body.dark {
   color: #ffffff;
 }
@@ -35,6 +44,8 @@ body.dark {
 
   background: transparent;
   padding: 20px;
+
+  flex: 1; /* 🔥 KEY FIX */
 }
 
 /* TOP BAR */
@@ -116,7 +127,7 @@ body.dark .file {
   color: white;
 }
 
-/* BUTTON INSIDE FILE */
+/* FILE BUTTON */
 .file button {
   padding: 6px 12px;
   border: none;
@@ -181,7 +192,7 @@ body.dark #themeToggle {
   color: white;
 }
 
-/* ---------------- PAGINATION ---------------- */
+/* PAGINATION */
 .pagination {
   text-align: center;
   margin-top: 20px;
@@ -205,7 +216,7 @@ body.dark #themeToggle {
   background: rgba(0, 86, 179, 0.9);
 }
 
-/* ---------------- DETAILS PAGE ---------------- */
+/* DETAILS PAGE */
 .details-page {
   text-align: center;
 }
@@ -245,11 +256,12 @@ body.dark #themeToggle {
   padding: 10px 15px;
 }
 
-/* ---------------- MOBILE FIX ---------------- */
+/* MOBILE FIX */
 @media (max-width: 768px) {
   .container {
     width: 95%;
     margin-top: 20px;
+    flex: 1;
   }
 
   .file {
