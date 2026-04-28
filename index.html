@@ -35,42 +35,54 @@ function goToApp() {
 }
 </script>
 
-<!-- 🔥 FIREBASE (COMPAT VERSION - STABLE) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- 🔥 FIREBASE (SAFE + STABLE VERSION) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBnPwFPYYdWJ4FuBnvL0CpgzVxo9YyRMGg",
-  authDomain: "filehub-counter.firebaseapp.com",
-  projectId: "filehub-counter"
-};
+window.addEventListener("DOMContentLoaded", function () {
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+  try {
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnPwFPYYdWJ4FuBnvL0CpgzVxo9YyRMGg",
+      authDomain: "filehub-counter.firebaseapp.com",
+      projectId: "filehub-counter"
+    };
 
-// Reference
-const ref = db.collection("stats").doc("visitors");
+    // Prevent double initialization
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
 
-// 🔥 Visitor Counter (SAFE)
-ref.set({
-  count: firebase.firestore.FieldValue.increment(1)
-}, { merge: true })
-.then(() => ref.get())
-.then(doc => {
-  if (doc.exists) {
+    const db = firebase.firestore();
+    const ref = db.collection("stats").doc("visitors");
+
+    // 🔥 Increment counter safely
+    ref.set({
+      count: firebase.firestore.FieldValue.increment(1)
+    }, { merge: true })
+    .then(() => ref.get())
+    .then(doc => {
+      if (doc.exists) {
+        document.getElementById("visitorCount").innerText =
+          "👁 Visitors: " + doc.data().count;
+      } else {
+        document.getElementById("visitorCount").innerText =
+          "👁 Visitors: 1";
+      }
+    })
+    .catch(err => {
+      console.error("Firebase error:", err);
+      document.getElementById("visitorCount").innerText =
+        "⚠️ Visitors unavailable";
+    });
+
+  } catch (e) {
+    console.error("Init error:", e);
     document.getElementById("visitorCount").innerText =
-      "👁 Visitors: " + doc.data().count;
-  } else {
-    document.getElementById("visitorCount").innerText =
-      "👁 Visitors: 1";
+      "⚠️ Visitors unavailable";
   }
-})
-.catch(err => {
-  console.error("Firebase error:", err);
-  document.getElementById("visitorCount").innerText =
-    "👁 Visitors: error";
+
 });
 </script>
 
