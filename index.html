@@ -6,6 +6,11 @@
 </head>
 <body>
 
+<!-- 🔥 VISITOR BOX (TOP RIGHT) -->
+<div id="visitorBox">
+  <span id="visitorCount">Visitors: 0</span>
+</div>
+
 <!-- PROFILE IMAGE (TOP LEFT) -->
 <a href="https://t.me/llathu63035" target="_blank" class="profile-link">
   <img src="https://raw.githubusercontent.com/Alatheesh/PERSONAL_WEBSITE/main/images/telegram_image.jpg" alt="Profile">
@@ -16,9 +21,6 @@
 
   <h1>📁 File Hub</h1>
   <p>Store and access your files easily</p>
-
-  <!-- 👁 VISITOR COUNT -->
-  <p id="visitorCount">Loading visitors...</p>
 
   <button onclick="goToApp()">Get Started</button>
 
@@ -72,21 +74,21 @@ window.addEventListener("DOMContentLoaded", function () {
       })
       .then(doc => {
         document.getElementById("visitorCount").innerText =
-          "👁 Visitors: " + doc.data().count;
+          "Visitors: " + doc.data().count;
       });
 
     } else {
       // 👁 Just show count
       ref.get().then(doc => {
         document.getElementById("visitorCount").innerText =
-          "👁 Visitors: " + doc.data().count;
+          "Visitors: " + doc.data().count;
       });
     }
 
   } catch (e) {
     console.error("Error:", e);
     document.getElementById("visitorCount").innerText =
-      "⚠️ Visitors unavailable";
+      "Visitors unavailable";
   }
 
 });
