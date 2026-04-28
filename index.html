@@ -34,9 +34,9 @@ function goToApp() {
   window.location.href = "search.html"; 
 }
 
-// 👁 VISITOR COUNTER (FIXED)
+// 👁 VISITOR COUNTER (WORKING VERSION)
 window.addEventListener("DOMContentLoaded", function () {
-  fetch("https://api.countapi.xyz/hit/latheesh-filehub-main/visits")
+  fetch("https://countapi.xyz/hit/latheesh-filehub-main/visits")
     .then(res => res.json())
     .then(data => {
       document.getElementById("visitorCount").innerText =
@@ -44,7 +44,7 @@ window.addEventListener("DOMContentLoaded", function () {
     })
     .catch(() => {
       document.getElementById("visitorCount").innerText =
-        "Visitors unavailable";
+        "👁 Visitors: 0";
     });
 });
 </script>
