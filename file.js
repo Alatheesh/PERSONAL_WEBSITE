@@ -1,5 +1,5 @@
 const params = new URLSearchParams(window.location.search);
-const id = parseInt(params.get("id"));
+let id = parseInt(params.get("id"));
 
 let allFiles = [];
 
@@ -40,17 +40,28 @@ async function loadFile() {
   });
 }
 
-// Back
+// 🔙 Back to previous page (search page with state)
 function goBack() {
   window.history.back();
 }
 
-// Next
+// ⬅️ Previous file
+function goPrevious() {
+  const prev = allFiles.find(f => f.id === id - 1);
+
+  if (prev) {
+    window.location.href = "file.html?id=" + prev.id;
+  }
+}
+
+// ➡️ Next file
 function goNext() {
   const next = allFiles.find(f => f.id === id + 1);
+
   if (next) {
     window.location.href = "file.html?id=" + next.id;
   }
 }
 
+// INIT
 loadFile();
