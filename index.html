@@ -6,23 +6,26 @@
 </head>
 <body>
 
-<!-- 🔥 VISITOR BOX (TOP RIGHT) -->
+<!-- 🔥 VISITOR BOX -->
 <div id="visitorBox">
   <span id="visitorCount">Visitors: 0</span>
 </div>
 
-<!-- PROFILE IMAGE (TOP LEFT) -->
+<!-- PROFILE IMAGE -->
 <a href="https://t.me/llathu63035" target="_blank" class="profile-link">
   <img src="https://raw.githubusercontent.com/Alatheesh/PERSONAL_WEBSITE/main/images/telegram_image.jpg" alt="Profile">
 </a>
 
-<!-- HERO SECTION -->
-<div class="hero">
+<!-- 🔥 PREMIUM HERO -->
+<div class="hero glass-card">
 
-  <h1>📁 File Hub</h1>
-  <p>Store and access your files easily</p>
+  <h1 id="typingText"></h1>
 
-  <button onclick="goToApp()">Get Started</button>
+  <p class="subtitle">Store and access your files easily</p>
+
+  <button onclick="goToApp()" class="premium-btn">
+    Get Started →
+  </button>
 
 </div>
 
@@ -37,7 +40,23 @@ function goToApp() {
 }
 </script>
 
-<!-- 🔥 FIREBASE (DAILY UNIQUE VISITOR VERSION) -->
+<!-- ⌨️ TYPING EFFECT -->
+<script>
+const text = "📁 File Hub";
+let i = 0;
+
+function typeEffect() {
+  if (i < text.length) {
+    document.getElementById("typingText").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeEffect, 80);
+  }
+}
+
+window.addEventListener("load", typeEffect);
+</script>
+
+<!-- 🔥 FIREBASE (DAILY UNIQUE VISITOR) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -62,9 +81,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
     const lastVisit = localStorage.getItem("lastVisitDate");
 
-    // ✅ Count only once per day
     if (lastVisit !== today) {
-
       ref.set({
         count: firebase.firestore.FieldValue.increment(1)
       }, { merge: true })
@@ -76,9 +93,7 @@ window.addEventListener("DOMContentLoaded", function () {
         document.getElementById("visitorCount").innerText =
           "Visitors: " + doc.data().count;
       });
-
     } else {
-      // 👁 Just show count
       ref.get().then(doc => {
         document.getElementById("visitorCount").innerText =
           "Visitors: " + doc.data().count;
@@ -86,7 +101,7 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
   } catch (e) {
-    console.error("Error:", e);
+    console.error(e);
     document.getElementById("visitorCount").innerText =
       "Visitors unavailable";
   }
