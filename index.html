@@ -33,25 +33,57 @@
 function goToApp() {
   window.location.href = "search.html"; 
 }
+</script>
 
-// 👁 VISITOR COUNTER (FIXED + NO CACHE)
-window.addEventListener("DOMContentLoaded", function () {
-  const url = "https://countapi.xyz/hit/latheesh-filehub-main/visits?rand=" + Math.random();
+<!-- 🔥 FIREBASE SCRIPT -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  fetch(url, { cache: "no-store" })
-    .then(res => {
-      if (!res.ok) throw new Error("API failed");
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("visitorCount").innerText =
-        "👁 Visitors: " + data.value;
-    })
-    .catch(() => {
-      document.getElementById("visitorCount").innerText =
-        "👁 Visitors: 0";
-    });
-});
+// 🔐 Your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyBnPwFPYYdWJ4FuBnvL0CpgzVxo9YyRMGg",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter",
+  storageBucket: "filehub-counter.firebasestorage.app",
+  messagingSenderId: "696175439521",
+  appId: "1:696175439521:web:1a6f3e8ec8fbae08bd4ae0",
+  measurementId: "G-854HCGTN6Y"
+};
+
+// Init Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Reference
+const ref = doc(db, "stats", "visitors");
+
+// Counter
+async function updateCounter() {
+  try {
+    const snap = await getDoc(ref);
+
+    let count = 0;
+
+    if (snap.exists()) {
+      count = snap.data().count || 0;
+    }
+
+    count++;
+
+    await setDoc(ref, { count });
+
+    document.getElementById("visitorCount").innerText =
+      "👁 Visitors: " + count;
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById("visitorCount").innerText =
+      "👁 Visitors: error";
+  }
+}
+
+updateCounter();
 </script>
 
 </body>
