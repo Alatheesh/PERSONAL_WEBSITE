@@ -1,10 +1,8 @@
 // ---------------- BACKGROUND ----------------
 window.addEventListener("DOMContentLoaded", function () {
   const backgrounds = [
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920",
-    "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?q=80&w=1920",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1920",
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920"
+    "https://th.wallhaven.cc/small/8x/8xlylk.jpg",
+    "https://th.wallhaven.cc/small/2k/2k73wm.jpg"
   ];
 
   const randomIndex = Math.floor(Math.random() * backgrounds.length);
