@@ -69,7 +69,7 @@ async function getData() {
   result.sort((a, b) => b.id - a.id);
 
   document.getElementById("output").value =
-    JSON.stringify(result, null, 2);
+    result.map(item => JSON.stringify(item, null, 2)).join(",\n");
 }
 
 // 📋 COPY
