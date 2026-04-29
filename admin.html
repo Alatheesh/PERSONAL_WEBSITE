@@ -23,6 +23,11 @@
   <input type="text" id="type" placeholder="Type (PDF, Video)"><br><br>
   <input type="text" id="category" placeholder="Category"><br><br>
 
+  <!-- 🔥 NEW FIELDS -->
+  <input type="text" id="image" placeholder="Image URL"><br><br>
+  <input type="text" id="link" placeholder="Download / View Link"><br><br>
+  <textarea id="description" placeholder="Description"></textarea><br><br>
+
   <button onclick="addFile()">Add File</button>
   <br><br>
   <button onclick="logout()">Logout</button>
@@ -48,18 +53,14 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// 🔐 LOGIN (REAL AUTH)
+// 🔐 LOGIN
 function login() {
   const email = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
   auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      alert("Login successful");
-    })
-    .catch(err => {
-      alert(err.message);
-    });
+    .then(() => alert("Login successful"))
+    .catch(err => alert(err.message));
 }
 
 // 🔓 LOGOUT
@@ -92,8 +93,12 @@ async function addFile() {
   const type = document.getElementById("type").value.trim();
   const category = document.getElementById("category").value.trim();
 
+  const image = document.getElementById("image").value.trim();
+  const link = document.getElementById("link").value.trim();
+  const description = document.getElementById("description").value.trim();
+
   if (!name || !type || !category) {
-    alert("Please fill all fields");
+    alert("Please fill required fields");
     return;
   }
 
@@ -105,7 +110,7 @@ async function addFile() {
 
     const localMax = Math.max(...localFiles.map(f => f.id), 0);
 
-    // 🔹 Load Firebase data
+    // 🔹 Load Firebase
     const snapshot = await db.collection("files").get();
 
     let firebaseMax = 0;
@@ -124,15 +129,18 @@ async function addFile() {
       customId: nextId,
       name: name,
       type: type,
-      category: category
+      category: category,
+      image: image,
+      link: link,
+      description: description
     });
 
     alert("File added successfully! ID: " + nextId);
 
-    // 🔄 Clear inputs
-    document.getElementById("name").value = "";
-    document.getElementById("type").value = "";
-    document.getElementById("category").value = "";
+    // 🔄 Clear fields
+    ["name","type","category","image","link","description"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
 
   } catch (err) {
     console.error("FULL ERROR:", err);
