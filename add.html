@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+</head>
+<body>
+
+<h2>Admin Panel</h2>
+
+<!-- 🔐 Login Section -->
+<div id="loginBox">
+  <input type="email" id="username" placeholder="Email"><br><br>
+  <input type="password" id="password" placeholder="Password"><br><br>
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- 📂 Admin Section -->
+<div id="adminBox" style="display:none;">
+
+  <h3>Add New File</h3>
+
+  <input type="text" id="name" placeholder="File Name"><br><br>
+  <input type="text" id="type" placeholder="Type (PDF, Video)"><br><br>
+  <input type="text" id="category" placeholder="Category"><br><br>
+
+  <input type="text" id="image" placeholder="Image URL"><br><br>
+
+  <textarea id="link" placeholder="Enter multiple links separated by comma"></textarea><br><br>
+
+  <textarea id="description" placeholder="Description"></textarea><br><br>
+
+  <button onclick="addFile()">Add File</button>
+  <br><br>
+  <button onclick="logout()">Logout</button>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// LOGIN
+function login() {
+  const email = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => alert("Login successful"))
+    .catch(err => alert(err.message));
+}
+
+// LOGOUT
+function logout() {
+  auth.signOut();
+}
+
+// AUTO LOGIN
+auth.onAuthStateChanged(user => {
+  document.getElementById("loginBox").style.display = user ? "none" : "block";
+  document.getElementById("adminBox").style.display = user ? "block" : "none";
+});
+
+// ADD FILE
+async function addFile() {
+
+  if (!auth.currentUser) {
+    alert("Login first");
+    return;
+  }
+
+  const fileName = document.getElementById("name").value.trim();
+  const fileType = document.getElementById("type").value.trim();
+  const fileCategory = document.getElementById("category").value.trim();
+  const fileImage = document.getElementById("image").value.trim();
+
+  const linkInput = document.getElementById("link").value.trim();
+  const links = linkInput.split(",").map(l => l.trim()).filter(l => l);
+
+  const fileDescription = document.getElementById("description").value.trim();
+
+  if (!fileName || !fileType || !fileCategory) {
+    alert("Fill required fields");
+    return;
+  }
+
+  try {
+
+    // Get max ID from JSON
+    const res = await fetch("files.json");
+    const localFiles = await res.json();
+    const localMax = Math.max(...localFiles.map(f => f.id), 0);
+
+    // Get max ID from Firebase
+    const snapshot = await db.collection("files").get();
+    let firebaseMax = 0;
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.customId > firebaseMax) firebaseMax = data.customId;
+    });
+
+    // Next ID
+    const nextId = Math.max(localMax, firebaseMax) + 1;
+
+    // Save
+    await db.collection("files").add({
+      customId: nextId,
+      name: fileName,
+      type: fileType,
+      category: fileCategory,
+      image: fileImage,
+      links: links,
+      description: fileDescription
+    });
+
+    // ✅ UPDATED ALERT
+    alert("File added successfully! ID: " + nextId);
+
+    // Clear inputs
+    ["name","type","category","image","link","description"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+}
+</script>
+
+</body>
+</html>
