@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Files</title>
+</head>
+<body>
+
+<h2>Edit File</h2>
+
+<!-- 🔙 BACK -->
+<button onclick="goBack()">← Back</button>
+
+<hr>
+
+<!-- 📂 FILE LIST -->
+<h3>Select File</h3>
+<div id="fileList">Loading...</div>
+
+<hr>
+
+<!-- ✏️ EDIT FORM -->
+<h3>Edit Selected File</h3>
+
+<input type="text" id="name" placeholder="File Name"><br><br>
+<input type="text" id="type" placeholder="Type"><br><br>
+<input type="text" id="category" placeholder="Category"><br><br>
+
+<input type="text" id="image" placeholder="Image URL"><br><br>
+
+<textarea id="link" placeholder="Links (comma separated)"></textarea><br><br>
+
+<textarea id="description" placeholder="Description"></textarea><br><br>
+
+<button onclick="updateFile()">Update File</button>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+let currentDocId = null;
+
+// 🔒 PROTECT PAGE
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    alert("Login first");
+    window.location.href = "admin.html";
+  } else {
+    loadFiles();
+  }
+});
+
+// 🔹 LOAD FILES
+async function loadFiles() {
+  const container = document.getElementById("fileList");
+  container.innerHTML = "Loading...";
+
+  const snapshot = await db.collection("files").get();
+
+  container.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+
+    container.innerHTML += `
+      <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <strong>${data.name}</strong><br>
+        ${data.type} • ${data.category}
+        <br><br>
+        <button onclick="selectFile('${doc.id}')">Edit</button>
+      </div>
+    `;
+  });
+}
+
+// 🔹 SELECT FILE
+async function selectFile(docId) {
+  const docRef = db.collection("files").doc(docId);
+  const docSnap = await docRef.get();
+
+  if (!docSnap.exists) {
+    alert("File not found");
+    return;
+  }
+
+  const data = docSnap.data();
+
+  currentDocId = docId;
+
+  document.getElementById("name").value = data.name || "";
+  document.getElementById("type").value = data.type || "";
+  document.getElementById("category").value = data.category || "";
+  document.getElementById("image").value = data.image || "";
+  document.getElementById("description").value = data.description || "";
+
+  document.getElementById("link").value =
+    (data.links || []).join(", ");
+}
+
+// 🔹 UPDATE FILE
+async function updateFile() {
+
+  if (!currentDocId) {
+    alert("Select a file first");
+    return;
+  }
+
+  const fileName = document.getElementById("name").value.trim();
+  const fileType = document.getElementById("type").value.trim();
+  const fileCategory = document.getElementById("category").value.trim();
+  const fileImage = document.getElementById("image").value.trim();
+
+  const linkInput = document.getElementById("link").value.trim();
+  const links = linkInput.split(",").map(l => l.trim()).filter(l => l);
+
+  const fileDescription = document.getElementById("description").value.trim();
+
+  try {
+    await db.collection("files").doc(currentDocId).update({
+      name: fileName,
+      type: fileType,
+      category: fileCategory,
+      image: fileImage,
+      links: links,
+      description: fileDescription
+    });
+
+    alert("File updated successfully!");
+
+    currentDocId = null;
+    loadFiles();
+
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+}
+
+// 🔙 BACK
+function goBack() {
+  window.location.href = "admin.html";
+}
+</script>
+
+</body>
+</html>
