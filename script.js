@@ -22,25 +22,32 @@ const fileList = document.getElementById("fileList");
 async function loadFiles() {
   try {
 
+    // 🔹 LOCAL JSON
     const res = await fetch("files.json");
     const localFiles = await res.json();
 
+    // 🔹 FIREBASE DATA
     const snapshot = await db.collection("files").get();
 
     const firebaseFiles = [];
     snapshot.forEach(doc => {
-      const data = doc.data();
+      const d = doc.data();
 
       firebaseFiles.push({
-        id: data.customId,
-        name: data.name,
-        type: data.type,
-        category: data.category,
-        link: data.link
+        id: d.customId,
+        name: d.name,
+        type: d.type,
+        category: d.category,
+        description: d.description || "",
+        image: d.image || "",
+        downloads: d.links || []   // ✅ FIXED
       });
     });
 
+    // 🔥 MERGE
     allFiles = [...localFiles, ...firebaseFiles];
+
+    // 🔥 SORT
     allFiles.sort((a, b) => b.id - a.id);
 
     currentFiles = allFiles;
@@ -117,7 +124,7 @@ function goToPage(page) {
   displayFiles();
 }
 
-// ---------------- NAVIGATION (FIXED) ----------------
+// ---------------- NAVIGATION ----------------
 function openFile(id) {
   window.location.href = "file.html?id=" + id;
 }
