@@ -31,6 +31,7 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -42,24 +43,22 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
-const db = firebase.firestore();
 
-// ✅ SET PERSISTENCE PROPERLY
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    console.log("Persistence set to LOCAL");
-  })
-  .catch(err => {
-    console.error("Persistence error:", err);
-  });
+// ✅ persistence (keep user logged in)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 // LOGIN
 function login() {
-  const email = username.value;
-  const pass = password.value;
+  const email = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
 
   auth.signInWithEmailAndPassword(email, pass)
-    .then(() => alert("Login successful"))
+    .then(() => {
+      alert("Login successful");
+
+      // 🔥 FORCE UI UPDATE (important fix)
+      showMenu();
+    })
     .catch(err => alert(err.message));
 }
 
@@ -68,10 +67,20 @@ function logout() {
   auth.signOut();
 }
 
-// STATE
+// 🔥 FORCE UI SWITCH FUNCTION
+function showMenu() {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("menuBox").style.display = "block";
+}
+
+// 🔥 AUTH STATE LISTENER
 auth.onAuthStateChanged(user => {
-  loginBox.style.display = user ? "none" : "block";
-  menuBox.style.display = user ? "block" : "none";
+  if (user) {
+    showMenu();
+  } else {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("menuBox").style.display = "none";
+  }
 });
 
 // NAVIGATION
