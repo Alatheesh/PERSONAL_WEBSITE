@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Export Firebase Data</title>
+</head>
+<body>
+
+<h2>Export Firebase → JSON</h2>
+
+<button onclick="goBack()">← Back</button>
+
+<br><br>
+
+<button onclick="getData()">Get Data</button>
+<button onclick="copyData()">Copy JSON</button>
+
+<br><br>
+
+<textarea id="output" rows="20" cols="80" placeholder="JSON will appear here..."></textarea>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// 🔒 protect page
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    alert("Login first");
+    window.location.href = "admin.html";
+  }
+});
+
+// 🔥 GET DATA
+async function getData() {
+
+  const snapshot = await db.collection("files").get();
+
+  const result = [];
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+
+    // 🔥 convert format
+    result.push({
+      id: d.customId,
+      name: d.name,
+      type: d.type,
+      category: d.category,
+      description: d.description || "",
+      image: d.image || "",
+      downloads: d.links || []
+    });
+  });
+
+  // 🔥 sort by ID (important)
+  result.sort((a, b) => b.id - a.id);
+
+  document.getElementById("output").value =
+    JSON.stringify(result, null, 2);
+}
+
+// 📋 COPY
+function copyData() {
+  const textarea = document.getElementById("output");
+  textarea.select();
+  document.execCommand("copy");
+  alert("Copied!");
+}
+
+// 🔙 BACK
+function goBack() {
+  window.location.href = "admin.html";
+}
+</script>
+
+</body>
+</html>
