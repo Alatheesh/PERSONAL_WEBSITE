@@ -91,14 +91,21 @@ async function loadFile() {
     });
   });
 
-  const file = [...localFiles, ...firebaseFiles].find(f => f.id === id);
+  const file = [...localFiles, ...firebaseFiles].find(f => Number(f.id) === id);
 
   if (!file) {
     fileCard.innerHTML = "File not found";
     return;
   }
 
-  const links = file.links || (file.link ? [file.link] : []);
+  // 🔥 FIXED LOGIC
+  let links = [];
+
+  if (Array.isArray(file.links) && file.links.length > 0) {
+    links = file.links;
+  } else if (file.link && typeof file.link === "string" && file.link.trim() !== "") {
+    links = [file.link];
+  }
 
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
@@ -106,11 +113,15 @@ async function loadFile() {
     <p>${file.type} • ${file.category}</p>
     <p>${file.description || ''}</p>
 
-    ${links.map((l,i)=>`
-      <button onclick="window.open('${l}','_blank')">
-        Download ${i+1}
-      </button>
-    `).join("")}
+    ${
+      links.length > 0
+      ? links.map((l,i)=>`
+          <button onclick="window.open('${l}','_blank')">
+            Download ${i+1}
+          </button>
+        `).join("")
+      : "<p style='opacity:0.7;'>No download link available</p>"
+    }
   `;
 }
 
