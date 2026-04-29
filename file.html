@@ -1,3 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Details</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 12px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: 22px;
+    }
+
+    p {
+      margin: 5px 0;
+      opacity: 0.9;
+    }
+
+    .desc {
+      font-size: 14px;
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+    }
+
+    .back {
+      background: #555;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card" id="fileCard">
+  Loading...
+</div>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -14,14 +86,14 @@ const db = firebase.firestore();
 async function loadFile() {
 
   const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get("id"));
+  const id = Number(params.get("id"));
 
   try {
-    // 🔹 Load JSON
+    // JSON
     const res = await fetch("files.json");
     const localFiles = await res.json();
 
-    // 🔹 Load Firebase
+    // Firebase
     const snapshot = await db.collection("files").get();
 
     const firebaseFiles = [];
@@ -29,7 +101,7 @@ async function loadFile() {
       const data = doc.data();
 
       firebaseFiles.push({
-        id: data.customId,
+        id: Number(data.customId),
         name: data.name,
         type: data.type,
         category: data.category,
@@ -39,32 +111,33 @@ async function loadFile() {
       });
     });
 
-    // 🔥 Merge both
     const allFiles = [...localFiles, ...firebaseFiles];
 
-    // 🔍 Find file
-    const file = allFiles.find(f => f.id === id);
+    const file = allFiles.find(f => Number(f.id) === id);
 
     if (!file) {
-      document.body.innerHTML = "<h1>File not found</h1>";
+      document.getElementById("fileCard").innerHTML = "<h2>File not found</h2>";
       return;
     }
 
-    // 🎯 DISPLAY (simple version)
-    document.body.innerHTML = `
+    document.getElementById("fileCard").innerHTML = `
+      <img src="${file.image || 'https://via.placeholder.com/300'}">
       <h1>${file.name}</h1>
       <p>${file.type} • ${file.category}</p>
-      <p>${file.description || ''}</p>
+      <p class="desc">${file.description || ''}</p>
+
       <button onclick="window.open('${file.link}', '_blank')">Open File</button>
-      <br><br>
-      <button onclick="window.history.back()">← Back</button>
+      <button class="back" onclick="history.back()">← Back</button>
     `;
 
   } catch (err) {
     console.error(err);
-    document.body.innerHTML = "<h1>Error loading file</h1>";
+    document.getElementById("fileCard").innerHTML = "<h2>Error loading file</h2>";
   }
 }
 
 loadFile();
 </script>
+
+</body>
+</html>
