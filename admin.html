@@ -48,7 +48,7 @@ function login() {
 
 // 🔥 Firebase Config (PUT YOUR NEW API KEY HERE)
 const firebaseConfig = {
-  apiKey: "YOUR_NEW_API_KEY",
+  apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
   authDomain: "filehub-counter.firebaseapp.com",
   projectId: "filehub-counter"
 };
@@ -106,8 +106,8 @@ async function addFile() {
     document.getElementById("category").value = "";
 
   } catch (err) {
-    console.error(err);
-    alert("Error adding file");
+  console.error("FULL ERROR:", err);
+  alert(err.message);
   }
 }
 
