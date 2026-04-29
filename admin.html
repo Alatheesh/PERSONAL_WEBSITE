@@ -23,9 +23,11 @@
   <input type="text" id="type" placeholder="Type (PDF, Video)"><br><br>
   <input type="text" id="category" placeholder="Category"><br><br>
 
-  <!-- 🔥 NEW FIELDS -->
   <input type="text" id="image" placeholder="Image URL"><br><br>
-  <input type="text" id="link" placeholder="Download / View Link"><br><br>
+
+  <!-- 🔥 MULTIPLE LINKS -->
+  <textarea id="link" placeholder="Enter multiple links separated by comma"></textarea><br><br>
+
   <textarea id="description" placeholder="Description"></textarea><br><br>
 
   <button onclick="addFile()">Add File</button>
@@ -34,14 +36,12 @@
 
 </div>
 
-<!-- 🔥 Firebase Scripts -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-
-// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
   authDomain: "filehub-counter.firebaseapp.com",
@@ -53,101 +53,82 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// 🔐 LOGIN
+// LOGIN
 function login() {
-  const email = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const email = username.value;
+  const password = password.value;
 
   auth.signInWithEmailAndPassword(email, password)
     .then(() => alert("Login successful"))
     .catch(err => alert(err.message));
 }
 
-// 🔓 LOGOUT
+// LOGOUT
 function logout() {
   auth.signOut();
 }
 
-// 🔁 AUTO LOGIN STATE
+// AUTO LOGIN
 auth.onAuthStateChanged(user => {
-  if (user) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminBox").style.display = "block";
-  } else {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("adminBox").style.display = "none";
-  }
+  loginBox.style.display = user ? "none" : "block";
+  adminBox.style.display = user ? "block" : "none";
 });
 
-// ➕ ADD FILE FUNCTION
+// ADD FILE
 async function addFile() {
 
-  const user = auth.currentUser;
-
-  if (!user) {
-    alert("You must login first");
+  if (!auth.currentUser) {
+    alert("Login first");
     return;
   }
 
-  const name = document.getElementById("name").value.trim();
-  const type = document.getElementById("type").value.trim();
-  const category = document.getElementById("category").value.trim();
+  const name = name.value.trim();
+  const type = type.value.trim();
+  const category = category.value.trim();
+  const image = image.value.trim();
 
-  const image = document.getElementById("image").value.trim();
-  const link = document.getElementById("link").value.trim();
-  const description = document.getElementById("description").value.trim();
+  const linkInput = document.getElementById("link").value.trim();
+  const links = linkInput.split(",").map(l => l.trim()).filter(l => l);
+
+  const description = description.value.trim();
 
   if (!name || !type || !category) {
-    alert("Please fill required fields");
+    alert("Fill required fields");
     return;
   }
 
   try {
-
-    // 🔹 Load local JSON
     const res = await fetch("files.json");
     const localFiles = await res.json();
 
     const localMax = Math.max(...localFiles.map(f => f.id), 0);
 
-    // 🔹 Load Firebase
     const snapshot = await db.collection("files").get();
-
     let firebaseMax = 0;
+
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.customId && data.customId > firebaseMax) {
-        firebaseMax = data.customId;
-      }
+      if (data.customId > firebaseMax) firebaseMax = data.customId;
     });
 
-    // 🔥 Next ID
     const nextId = Math.max(localMax, firebaseMax) + 1;
 
-    // 🔥 Save to Firebase
     await db.collection("files").add({
       customId: nextId,
-      name: name,
-      type: type,
-      category: category,
-      image: image,
-      link: link,
-      description: description
+      name,
+      type,
+      category,
+      image,
+      links,
+      description
     });
 
-    alert("File added successfully! ID: " + nextId);
-
-    // 🔄 Clear fields
-    ["name","type","category","image","link","description"].forEach(id => {
-      document.getElementById(id).value = "";
-    });
+    alert("Added!");
 
   } catch (err) {
-    console.error("FULL ERROR:", err);
     alert(err.message);
   }
 }
-
 </script>
 
 </body>
