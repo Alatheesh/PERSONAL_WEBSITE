@@ -1,154 +1,70 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Admin Panel</title>
-</head>
-<body>
-
-<h2>Admin Panel</h2>
-
-<!-- 🔐 Login Section -->
-<div id="loginBox">
-  <input type="email" id="username" placeholder="Email"><br><br>
-  <input type="password" id="password" placeholder="Password"><br><br>
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- 📂 Admin Section -->
-<div id="adminBox" style="display:none;">
-
-  <h3>Add New File</h3>
-
-  <input type="text" id="name" placeholder="File Name"><br><br>
-  <input type="text" id="type" placeholder="Type (PDF, Video)"><br><br>
-  <input type="text" id="category" placeholder="Category"><br><br>
-
-  <!-- 🔥 NEW FIELDS -->
-  <input type="text" id="image" placeholder="Image URL"><br><br>
-  <input type="text" id="link" placeholder="Download / View Link"><br><br>
-  <textarea id="description" placeholder="Description"></textarea><br><br>
-
-  <button onclick="addFile()">Add File</button>
-  <br><br>
-  <button onclick="logout()">Logout</button>
-
-</div>
-
-<!-- 🔥 Firebase Scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-
-// 🔥 Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
+  apiKey: "YOUR_API_KEY",
   authDomain: "filehub-counter.firebaseapp.com",
   projectId: "filehub-counter"
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.firestore();
-const auth = firebase.auth();
 
-// 🔐 LOGIN
-function login() {
-  const email = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+async function loadFile() {
 
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => alert("Login successful"))
-    .catch(err => alert(err.message));
-}
-
-// 🔓 LOGOUT
-function logout() {
-  auth.signOut();
-}
-
-// 🔁 AUTO LOGIN STATE
-auth.onAuthStateChanged(user => {
-  if (user) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminBox").style.display = "block";
-  } else {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("adminBox").style.display = "none";
-  }
-});
-
-// ➕ ADD FILE FUNCTION
-async function addFile() {
-
-  const user = auth.currentUser;
-
-  if (!user) {
-    alert("You must login first");
-    return;
-  }
-
-  const name = document.getElementById("name").value.trim();
-  const type = document.getElementById("type").value.trim();
-  const category = document.getElementById("category").value.trim();
-
-  const image = document.getElementById("image").value.trim();
-  const link = document.getElementById("link").value.trim();
-  const description = document.getElementById("description").value.trim();
-
-  if (!name || !type || !category) {
-    alert("Please fill required fields");
-    return;
-  }
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get("id"));
 
   try {
-
-    // 🔹 Load local JSON
+    // 🔹 Load JSON
     const res = await fetch("files.json");
     const localFiles = await res.json();
-
-    const localMax = Math.max(...localFiles.map(f => f.id), 0);
 
     // 🔹 Load Firebase
     const snapshot = await db.collection("files").get();
 
-    let firebaseMax = 0;
+    const firebaseFiles = [];
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.customId && data.customId > firebaseMax) {
-        firebaseMax = data.customId;
-      }
+
+      firebaseFiles.push({
+        id: data.customId,
+        name: data.name,
+        type: data.type,
+        category: data.category,
+        link: data.link,
+        description: data.description,
+        image: data.image
+      });
     });
 
-    // 🔥 Next ID
-    const nextId = Math.max(localMax, firebaseMax) + 1;
+    // 🔥 Merge both
+    const allFiles = [...localFiles, ...firebaseFiles];
 
-    // 🔥 Save to Firebase
-    await db.collection("files").add({
-      customId: nextId,
-      name: name,
-      type: type,
-      category: category,
-      image: image,
-      link: link,
-      description: description
-    });
+    // 🔍 Find file
+    const file = allFiles.find(f => f.id === id);
 
-    alert("File added successfully! ID: " + nextId);
+    if (!file) {
+      document.body.innerHTML = "<h1>File not found</h1>";
+      return;
+    }
 
-    // 🔄 Clear fields
-    ["name","type","category","image","link","description"].forEach(id => {
-      document.getElementById(id).value = "";
-    });
+    // 🎯 DISPLAY (simple version)
+    document.body.innerHTML = `
+      <h1>${file.name}</h1>
+      <p>${file.type} • ${file.category}</p>
+      <p>${file.description || ''}</p>
+      <button onclick="window.open('${file.link}', '_blank')">Open File</button>
+      <br><br>
+      <button onclick="window.history.back()">← Back</button>
+    `;
 
   } catch (err) {
-    console.error("FULL ERROR:", err);
-    alert(err.message);
+    console.error(err);
+    document.body.innerHTML = "<h1>Error loading file</h1>";
   }
 }
 
+loadFile();
 </script>
-
-</body>
-</html>
