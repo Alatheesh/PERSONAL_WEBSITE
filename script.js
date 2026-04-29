@@ -12,18 +12,49 @@ window.addEventListener("DOMContentLoaded", function () {
 
 // ---------------- FILE DATA ----------------
 let allFiles = [];
-let currentFiles = []; // 🔥 IMPORTANT (tracks filtered/search data)
+let currentFiles = [];
 let currentPage = 1;
 const itemsPerPage = 10;
 
 const fileList = document.getElementById("fileList");
 
-// ---------------- LOAD FILES ----------------
+// ---------------- LOAD FILES (UPDATED) ----------------
 async function loadFiles() {
-  const res = await fetch("files.json");
-  allFiles = await res.json();
-  currentFiles = allFiles; // 🔥 set default
-  displayFiles();
+  try {
+
+    // 🔹 Load local JSON
+    const res = await fetch("files.json");
+    const localFiles = await res.json();
+
+    // 🔹 Load Firebase data
+    const snapshot = await db.collection("files").get();
+
+    const firebaseFiles = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+
+      firebaseFiles.push({
+        id: data.customId,
+        name: data.name,
+        type: data.type,
+        category: data.category
+      });
+    });
+
+    // 🔥 Merge both sources
+    allFiles = [...localFiles, ...firebaseFiles];
+
+    // 🔥 Sort newest first
+    allFiles.sort((a, b) => b.id - a.id);
+
+    currentFiles = allFiles;
+
+    displayFiles();
+
+  } catch (err) {
+    console.error("Load error:", err);
+    fileList.innerHTML = "<p style='color:red;'>Error loading files</p>";
+  }
 }
 
 // ---------------- DISPLAY FILES ----------------
@@ -61,24 +92,18 @@ function createPagination() {
 
   let html = '<div class="pagination">';
 
-  // 📊 FILE COUNT
   html += `<p class="page-info">Showing ${startItem}–${endItem} of ${totalItems} files</p>`;
 
-  // ⏮ PREV
   html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
 
-  // 🔢 PAGE NUMBERS
   for (let i = 1; i <= totalPages; i++) {
     html += `
-      <button 
-        class="${i === currentPage ? 'active-page' : ''}" 
-        onclick="goToPage(${i})">
+      <button class="${i === currentPage ? 'active-page' : ''}" onclick="goToPage(${i})">
         ${i}
       </button>
     `;
   }
 
-  // ⏭ NEXT
   html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
 
   html += '</div>';
@@ -101,7 +126,6 @@ function openFile(id) {
   window.location.href = "file.html?id=" + id;
 }
 
-// 🔙 BACK BUTTON
 function goHome() {
   window.location.href = "index.html";
 }
