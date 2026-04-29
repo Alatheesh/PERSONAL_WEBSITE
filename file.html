@@ -101,9 +101,18 @@ async function loadFile() {
   // 🔥 FIXED LOGIC
   let links = [];
 
-  if (Array.isArray(file.links) && file.links.length > 0) {
+  // ✅ Case 1: JSON (downloads)
+  if (Array.isArray(file.downloads) && file.downloads.length > 0) {
+    links = file.downloads;
+  }
+
+  // ✅ Case 2: Firebase (links)
+  else if (Array.isArray(file.links) && file.links.length > 0) {
     links = file.links;
-  } else if (file.link && typeof file.link === "string" && file.link.trim() !== "") {
+  }
+  
+  // ✅ Case 3: Old single link
+  else if (file.link && typeof file.link === "string" && file.link.trim() !== "") {
     links = [file.link];
   }
 
