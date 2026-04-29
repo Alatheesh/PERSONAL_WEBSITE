@@ -18,7 +18,7 @@ const itemsPerPage = 10;
 
 const fileList = document.getElementById("fileList");
 
-// ---------------- LOAD FILES (UPDATED) ----------------
+// ---------------- LOAD FILES ----------------
 async function loadFiles() {
   try {
 
@@ -26,7 +26,7 @@ async function loadFiles() {
     const res = await fetch("files.json");
     const localFiles = await res.json();
 
-    // 🔹 Load Firebase data
+    // 🔹 Load Firebase
     const snapshot = await db.collection("files").get();
 
     const firebaseFiles = [];
@@ -37,11 +37,14 @@ async function loadFiles() {
         id: data.customId,
         name: data.name,
         type: data.type,
-        category: data.category
+        category: data.category,
+        image: data.image,
+        link: data.link,
+        description: data.description
       });
     });
 
-    // 🔥 Merge both sources
+    // 🔥 Merge
     allFiles = [...localFiles, ...firebaseFiles];
 
     // 🔥 Sort newest first
@@ -70,11 +73,16 @@ function displayFiles() {
   paginatedFiles.forEach(file => {
     fileList.innerHTML += `
       <div class="file">
+
+        <img src="${file.image || 'https://via.placeholder.com/150'}" class="file-img">
+
         <div>
           <strong>${file.name}</strong><br>
-          <small>${file.type} • ${file.category}</small>
+          <small>${file.type} • ${file.category}</small><br>
+          <p>${file.description || ''}</p>
         </div>
-        <button onclick="openFile(${file.id})">View Details</button>
+
+        <button onclick="openFile('${file.link}')">Open</button>
       </div>
     `;
   });
@@ -122,8 +130,12 @@ function goToPage(page) {
 }
 
 // ---------------- NAVIGATION ----------------
-function openFile(id) {
-  window.location.href = "file.html?id=" + id;
+function openFile(link) {
+  if (link) {
+    window.open(link, "_blank");
+  } else {
+    alert("No file link available");
+  }
 }
 
 function goHome() {
