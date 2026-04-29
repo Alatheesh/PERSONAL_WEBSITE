@@ -81,7 +81,6 @@ async function addFile() {
     return;
   }
 
-  // ✅ FIXED VARIABLES
   const fileName = document.getElementById("name").value.trim();
   const fileType = document.getElementById("type").value.trim();
   const fileCategory = document.getElementById("category").value.trim();
@@ -98,11 +97,13 @@ async function addFile() {
   }
 
   try {
+
+    // Get max ID from JSON
     const res = await fetch("files.json");
     const localFiles = await res.json();
-
     const localMax = Math.max(...localFiles.map(f => f.id), 0);
 
+    // Get max ID from Firebase
     const snapshot = await db.collection("files").get();
     let firebaseMax = 0;
 
@@ -111,8 +112,10 @@ async function addFile() {
       if (data.customId > firebaseMax) firebaseMax = data.customId;
     });
 
+    // Next ID
     const nextId = Math.max(localMax, firebaseMax) + 1;
 
+    // Save
     await db.collection("files").add({
       customId: nextId,
       name: fileName,
@@ -123,9 +126,10 @@ async function addFile() {
       description: fileDescription
     });
 
-    alert("File added successfully!");
+    // ✅ UPDATED ALERT
+    alert("File added successfully! ID: " + nextId);
 
-    // clear inputs
+    // Clear inputs
     ["name","type","category","image","link","description"].forEach(id => {
       document.getElementById(id).value = "";
     });
