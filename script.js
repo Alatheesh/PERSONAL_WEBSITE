@@ -26,7 +26,7 @@ async function loadFiles() {
     const res = await fetch("files.json");
     const localFiles = await res.json();
 
-    // 🔹 Load Firebase
+    // 🔹 Load Firebase (KEEP DATA BUT SIMPLE USE)
     const snapshot = await db.collection("files").get();
 
     const firebaseFiles = [];
@@ -38,9 +38,7 @@ async function loadFiles() {
         name: data.name,
         type: data.type,
         category: data.category,
-        image: data.image,
-        link: data.link,
-        description: data.description
+        link: data.link   // only needed
       });
     });
 
@@ -60,7 +58,7 @@ async function loadFiles() {
   }
 }
 
-// ---------------- DISPLAY FILES ----------------
+// ---------------- DISPLAY FILES (OLD STYLE) ----------------
 function displayFiles() {
   fileList.innerHTML = "";
 
@@ -73,16 +71,11 @@ function displayFiles() {
   paginatedFiles.forEach(file => {
     fileList.innerHTML += `
       <div class="file">
-
-        <img src="${file.image || 'https://via.placeholder.com/150'}" class="file-img">
-
         <div>
           <strong>${file.name}</strong><br>
-          <small>${file.type} • ${file.category}</small><br>
-          <p>${file.description || ''}</p>
+          <small>${file.type} • ${file.category}</small>
         </div>
-
-        <button onclick="openFile('${file.link}')">Open</button>
+        <button onclick="openFile('${file.link}')">View Details</button>
       </div>
     `;
   });
