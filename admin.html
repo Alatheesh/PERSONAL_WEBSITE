@@ -55,14 +55,13 @@ const auth = firebase.auth();
 
 // LOGIN
 function login() {
-  const email = username.value;
-  const password = password.value;
+  const email = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
 
-  auth.signInWithEmailAndPassword(email, password)
+  auth.signInWithEmailAndPassword(email, pass)
     .then(() => alert("Login successful"))
     .catch(err => alert(err.message));
 }
-
 // LOGOUT
 function logout() {
   auth.signOut();
