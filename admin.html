@@ -25,7 +25,6 @@
 
   <input type="text" id="image" placeholder="Image URL"><br><br>
 
-  <!-- 🔥 MULTIPLE LINKS -->
   <textarea id="link" placeholder="Enter multiple links separated by comma"></textarea><br><br>
 
   <textarea id="description" placeholder="Description"></textarea><br><br>
@@ -62,6 +61,7 @@ function login() {
     .then(() => alert("Login successful"))
     .catch(err => alert(err.message));
 }
+
 // LOGOUT
 function logout() {
   auth.signOut();
@@ -69,8 +69,8 @@ function logout() {
 
 // AUTO LOGIN
 auth.onAuthStateChanged(user => {
-  loginBox.style.display = user ? "none" : "block";
-  adminBox.style.display = user ? "block" : "none";
+  document.getElementById("loginBox").style.display = user ? "none" : "block";
+  document.getElementById("adminBox").style.display = user ? "block" : "none";
 });
 
 // ADD FILE
@@ -81,17 +81,18 @@ async function addFile() {
     return;
   }
 
-  const name = name.value.trim();
-  const type = type.value.trim();
-  const category = category.value.trim();
-  const image = image.value.trim();
+  // ✅ FIXED VARIABLES
+  const fileName = document.getElementById("name").value.trim();
+  const fileType = document.getElementById("type").value.trim();
+  const fileCategory = document.getElementById("category").value.trim();
+  const fileImage = document.getElementById("image").value.trim();
 
   const linkInput = document.getElementById("link").value.trim();
   const links = linkInput.split(",").map(l => l.trim()).filter(l => l);
 
-  const description = description.value.trim();
+  const fileDescription = document.getElementById("description").value.trim();
 
-  if (!name || !type || !category) {
+  if (!fileName || !fileType || !fileCategory) {
     alert("Fill required fields");
     return;
   }
@@ -114,17 +115,23 @@ async function addFile() {
 
     await db.collection("files").add({
       customId: nextId,
-      name,
-      type,
-      category,
-      image,
-      links,
-      description
+      name: fileName,
+      type: fileType,
+      category: fileCategory,
+      image: fileImage,
+      links: links,
+      description: fileDescription
     });
 
-    alert("Added!");
+    alert("File added successfully!");
+
+    // clear inputs
+    ["name","type","category","image","link","description"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
 
   } catch (err) {
+    console.error(err);
     alert(err.message);
   }
 }
