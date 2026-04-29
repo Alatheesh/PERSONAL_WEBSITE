@@ -9,7 +9,7 @@
 
 <!-- 🔐 Login Section -->
 <div id="loginBox">
-  <input type="text" id="username" placeholder="Username"><br><br>
+  <input type="email" id="username" placeholder="Email"><br><br>
   <input type="password" id="password" placeholder="Password"><br><br>
   <button onclick="login()">Login</button>
 </div>
@@ -24,29 +24,19 @@
   <input type="text" id="category" placeholder="Category"><br><br>
 
   <button onclick="addFile()">Add File</button>
+  <br><br>
+  <button onclick="logout()">Logout</button>
 
 </div>
 
 <!-- 🔥 Firebase Scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
 
-// 🔐 LOGIN
-function login() {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
-
-  if (user === "admin" && pass === "1234") {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminBox").style.display = "block";
-  } else {
-    alert("Wrong credentials");
-  }
-}
-
-// 🔥 Firebase Config (PUT YOUR NEW API KEY HERE)
+// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
   authDomain: "filehub-counter.firebaseapp.com",
@@ -54,10 +44,49 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
+const auth = firebase.auth();
+
+// 🔐 LOGIN (REAL AUTH)
+function login() {
+  const email = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      alert("Login successful");
+    })
+    .catch(err => {
+      alert(err.message);
+    });
+}
+
+// 🔓 LOGOUT
+function logout() {
+  auth.signOut();
+}
+
+// 🔁 AUTO LOGIN STATE
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminBox").style.display = "block";
+  } else {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("adminBox").style.display = "none";
+  }
+});
 
 // ➕ ADD FILE FUNCTION
 async function addFile() {
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    alert("You must login first");
+    return;
+  }
 
   const name = document.getElementById("name").value.trim();
   const type = document.getElementById("type").value.trim();
@@ -106,8 +135,8 @@ async function addFile() {
     document.getElementById("category").value = "";
 
   } catch (err) {
-  console.error("FULL ERROR:", err);
-  alert(err.message);
+    console.error("FULL ERROR:", err);
+    alert(err.message);
   }
 }
 
