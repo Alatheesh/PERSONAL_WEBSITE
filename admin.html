@@ -40,8 +40,18 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+const db = firebase.firestore();
+
+// ✅ SET PERSISTENCE PROPERLY
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log("Persistence set to LOCAL");
+  })
+  .catch(err => {
+    console.error("Persistence error:", err);
+  });
 
 // LOGIN
 function login() {
