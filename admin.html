@@ -27,9 +27,13 @@
 
 </div>
 
+<!-- 🔥 Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
 
-// 🔐 SIMPLE LOGIN (for now)
+// 🔐 LOGIN
 function login() {
   const user = document.getElementById("username").value;
   const pass = document.getElementById("password").value;
@@ -39,6 +43,71 @@ function login() {
     document.getElementById("adminBox").style.display = "block";
   } else {
     alert("Wrong credentials");
+  }
+}
+
+// 🔥 Firebase Config (PUT YOUR NEW API KEY HERE)
+const firebaseConfig = {
+  apiKey: "YOUR_NEW_API_KEY",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ➕ ADD FILE FUNCTION
+async function addFile() {
+
+  const name = document.getElementById("name").value.trim();
+  const type = document.getElementById("type").value.trim();
+  const category = document.getElementById("category").value.trim();
+
+  if (!name || !type || !category) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+
+    // 🔹 Load local JSON
+    const res = await fetch("files.json");
+    const localFiles = await res.json();
+
+    const localMax = Math.max(...localFiles.map(f => f.id), 0);
+
+    // 🔹 Load Firebase data
+    const snapshot = await db.collection("files").get();
+
+    let firebaseMax = 0;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.customId && data.customId > firebaseMax) {
+        firebaseMax = data.customId;
+      }
+    });
+
+    // 🔥 Next ID
+    const nextId = Math.max(localMax, firebaseMax) + 1;
+
+    // 🔥 Save to Firebase
+    await db.collection("files").add({
+      customId: nextId,
+      name: name,
+      type: type,
+      category: category
+    });
+
+    alert("File added successfully! ID: " + nextId);
+
+    // 🔄 Clear inputs
+    document.getElementById("name").value = "";
+    document.getElementById("type").value = "";
+    document.getElementById("category").value = "";
+
+  } catch (err) {
+    console.error(err);
+    alert("Error adding file");
   }
 }
 
