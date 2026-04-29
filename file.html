@@ -1,37 +1,70 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>File Details</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-<!-- 🔙 TOP BUTTON (GO TO 2ND PAGE) -->
-<button onclick="goBack()" class="back-btn">← Back</button>
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter"
+};
 
-<div class="container details-page">
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  <h1 id="title"></h1>
+async function loadFile() {
 
-  <div class="preview">
-    <img id="image" />
-  </div>
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get("id"));
 
-  <div class="info">
-    <p id="meta"></p>
-    <p id="desc"></p>
-  </div>
+  try {
+    // 🔹 Load JSON
+    const res = await fetch("files.json");
+    const localFiles = await res.json();
 
-  <div id="downloads"></div>
+    // 🔹 Load Firebase
+    const snapshot = await db.collection("files").get();
 
-  <!-- 🔽 NAVIGATION BUTTONS -->
-  <div class="nav-buttons">
-    <button onclick="goPrevious()">← Previous</button>
-    <button onclick="goNext()">Next →</button>
-  </div>
+    const firebaseFiles = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
 
-</div>
+      firebaseFiles.push({
+        id: data.customId,
+        name: data.name,
+        type: data.type,
+        category: data.category,
+        link: data.link,
+        description: data.description,
+        image: data.image
+      });
+    });
 
-<script src="file.js"></script>
-</body>
-</html>
+    // 🔥 Merge both
+    const allFiles = [...localFiles, ...firebaseFiles];
+
+    // 🔍 Find file
+    const file = allFiles.find(f => f.id === id);
+
+    if (!file) {
+      document.body.innerHTML = "<h1>File not found</h1>";
+      return;
+    }
+
+    // 🎯 DISPLAY (simple version)
+    document.body.innerHTML = `
+      <h1>${file.name}</h1>
+      <p>${file.type} • ${file.category}</p>
+      <p>${file.description || ''}</p>
+      <button onclick="window.open('${file.link}', '_blank')">Open File</button>
+      <br><br>
+      <button onclick="window.history.back()">← Back</button>
+    `;
+
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML = "<h1>Error loading file</h1>";
+  }
+}
+
+loadFile();
+</script>
