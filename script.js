@@ -22,11 +22,9 @@ const fileList = document.getElementById("fileList");
 async function loadFiles() {
   try {
 
-    // 🔹 Load local JSON
     const res = await fetch("files.json");
     const localFiles = await res.json();
 
-    // 🔹 Load Firebase (KEEP DATA BUT SIMPLE USE)
     const snapshot = await db.collection("files").get();
 
     const firebaseFiles = [];
@@ -38,14 +36,11 @@ async function loadFiles() {
         name: data.name,
         type: data.type,
         category: data.category,
-        link: data.link   // only needed
+        link: data.link
       });
     });
 
-    // 🔥 Merge
     allFiles = [...localFiles, ...firebaseFiles];
-
-    // 🔥 Sort newest first
     allFiles.sort((a, b) => b.id - a.id);
 
     currentFiles = allFiles;
@@ -58,7 +53,7 @@ async function loadFiles() {
   }
 }
 
-// ---------------- DISPLAY FILES (OLD STYLE) ----------------
+// ---------------- DISPLAY FILES ----------------
 function displayFiles() {
   fileList.innerHTML = "";
 
@@ -75,7 +70,7 @@ function displayFiles() {
           <strong>${file.name}</strong><br>
           <small>${file.type} • ${file.category}</small>
         </div>
-        <button onclick="openFile('${file.link}')">View Details</button>
+        <button onclick="openFile(${file.id})">View Details</button>
       </div>
     `;
   });
@@ -122,13 +117,9 @@ function goToPage(page) {
   displayFiles();
 }
 
-// ---------------- NAVIGATION ----------------
-function openFile(link) {
-  if (link) {
-    window.open(link, "_blank");
-  } else {
-    alert("No file link available");
-  }
+// ---------------- NAVIGATION (FIXED) ----------------
+function openFile(id) {
+  window.location.href = "file.html?id=" + id;
 }
 
 function goHome() {
