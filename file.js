@@ -27,14 +27,32 @@ async function loadFile() {
   document.getElementById("desc").textContent =
     file.description;
 
-  // Download links
+  // 🔥 Download links
   const downloadsDiv = document.getElementById("downloads");
   downloadsDiv.innerHTML = "";
 
-  file.downloads.forEach((link, index) => {
+  // 🔥 SUPPORT BOTH OLD + NEW FORMAT
+  const links = file.links || file.downloads || [];
+
+  links.forEach((link, index) => {
+
+    let url, sizeText;
+
+    if (typeof link === "string") {
+      // OLD FORMAT
+      url = link;
+      sizeText = `Link ${index + 1}`;
+    } else {
+      // NEW FORMAT
+      url = link.url;
+      sizeText = link.size
+        ? `${link.size} ${link.unit}`
+        : `Link ${index + 1}`;
+    }
+
     downloadsDiv.innerHTML += `
-      <a href="${link}" target="_blank" class="download-btn">
-        Download Link ${index + 1}
+      <a href="${url}" target="_blank" class="download-btn">
+        ⬇ Download • ${sizeText}
       </a>
     `;
   });
@@ -55,7 +73,7 @@ async function loadFile() {
   }
 }
 
-// 🔙 Back to 2nd page (FIXED)
+// 🔙 Back to 2nd page
 function goBack() {
   window.location.href = "search.html";
 }
