@@ -10,9 +10,8 @@
       color: white;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     .card {
@@ -22,6 +21,7 @@
       width: 350px;
       text-align: center;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      margin-top: 40px;
     }
 
     .card img {
@@ -46,6 +46,16 @@
       background: #555;
       margin-top: 20px;
     }
+
+    /* 🔥 Bottom fixed report button */
+    #reportBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff4444;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
@@ -53,6 +63,9 @@
 <div class="card" id="fileCard">Loading...</div>
 
 <button class="back" onclick="history.back()">← Back</button>
+
+<!-- 🔥 Report button container -->
+<div id="reportContainer"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -66,6 +79,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+let currentFileId = null;
 
 async function loadFile() {
 
@@ -98,7 +113,9 @@ async function loadFile() {
     return;
   }
 
-  // 🔥 FIXED LOGIC (priority: new → old)
+  currentFileId = file.id;
+
+  // 🔥 Link logic
   let links = [];
 
   if (Array.isArray(file.links) && file.links.length > 0) {
@@ -111,7 +128,19 @@ async function loadFile() {
     links = [file.link];
   }
 
-  // 🔥 BUILD UI
+  // 🔥 Check report ON/OFF
+  let reportEnabled = true;
+
+  try {
+    const settingsDoc = await db.collection("settings").doc("config").get();
+    if (settingsDoc.exists) {
+      reportEnabled = settingsDoc.data().reportEnabled !== false;
+    }
+  } catch (e) {
+    console.log("Settings fetch error", e);
+  }
+
+  // 🔥 Build UI
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
@@ -125,11 +154,9 @@ async function loadFile() {
           let url, label;
 
           if (typeof l === "string") {
-            // OLD FORMAT
             url = l;
             label = `Download ${i+1}`;
           } else {
-            // NEW FORMAT
             url = l.url;
             label = l.size
               ? `⬇ Download • ${l.size} ${l.unit}`
@@ -145,6 +172,27 @@ async function loadFile() {
       : "<p style='opacity:0.7;'>No download link available</p>"
     }
   `;
+
+  // 🔥 Add bottom report button
+  if (reportEnabled) {
+    document.getElementById("reportContainer").innerHTML = `
+      <button id="reportBtn" onclick="reportIssue()">⚠ Report Issue</button>
+    `;
+  }
+}
+
+// 📤 Report function
+function reportIssue() {
+  const msg = prompt("Describe the issue:");
+  if (!msg) return;
+
+  db.collection("reports").add({
+    fileId: currentFileId,
+    message: msg,
+    time: new Date()
+  });
+
+  alert("Report submitted 👍");
 }
 
 loadFile();
