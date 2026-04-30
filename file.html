@@ -98,24 +98,20 @@ async function loadFile() {
     return;
   }
 
-  // 🔥 FIXED LOGIC
+  // 🔥 FIXED LOGIC (priority: new → old)
   let links = [];
 
-  // ✅ Case 1: JSON (downloads)
-  if (Array.isArray(file.downloads) && file.downloads.length > 0) {
-    links = file.downloads;
-  }
-
-  // ✅ Case 2: Firebase (links)
-  else if (Array.isArray(file.links) && file.links.length > 0) {
+  if (Array.isArray(file.links) && file.links.length > 0) {
     links = file.links;
-  }
-  
-  // ✅ Case 3: Old single link
+  } 
+  else if (Array.isArray(file.downloads) && file.downloads.length > 0) {
+    links = file.downloads;
+  } 
   else if (file.link && typeof file.link === "string" && file.link.trim() !== "") {
     links = [file.link];
   }
 
+  // 🔥 BUILD UI
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
@@ -124,11 +120,28 @@ async function loadFile() {
 
     ${
       links.length > 0
-      ? links.map((l,i)=>`
-          <button onclick="window.open('${l}','_blank')">
-            Download ${i+1}
-          </button>
-        `).join("")
+      ? links.map((l,i)=>{
+
+          let url, label;
+
+          if (typeof l === "string") {
+            // OLD FORMAT
+            url = l;
+            label = `Download ${i+1}`;
+          } else {
+            // NEW FORMAT
+            url = l.url;
+            label = l.size
+              ? `⬇ Download • ${l.size} ${l.unit}`
+              : `Download ${i+1}`;
+          }
+
+          return `
+            <button onclick="window.open('${url}','_blank')">
+              ${label}
+            </button>
+          `;
+        }).join("")
       : "<p style='opacity:0.7;'>No download link available</p>"
     }
   `;
