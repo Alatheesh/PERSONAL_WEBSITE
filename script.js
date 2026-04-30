@@ -26,7 +26,7 @@ async function loadJSON() {
   allJsonFiles = await res.json();
 }
 
-// ---------------- GET TOTAL COUNT (NO FAKE) ----------------
+// ---------------- GET TOTAL COUNT ----------------
 async function getTotalCount() {
   const snap = await db.collection("files")
     .orderBy("customId", "desc")
@@ -42,7 +42,7 @@ async function getTotalCount() {
   totalFilesCount = Math.max(highestId, allJsonFiles.length);
 }
 
-// ---------------- LOAD PAGE ----------------
+// ---------------- LOAD PAGE (LIFO FIXED) ----------------
 async function loadPage(page) {
 
   if (pageCache[page]) {
@@ -51,17 +51,19 @@ async function loadPage(page) {
     return;
   }
 
-  const startId = (page - 1) * itemsPerPage + 1;
-  const endId = page * itemsPerPage;
+  // 🔥 LIFO CALCULATION
+  const startId = totalFilesCount - (page * itemsPerPage) + 1;
+  const endId = totalFilesCount - ((page - 1) * itemsPerPage);
+  const safeStart = Math.max(1, startId);
 
-  // JSON
+  // 🔹 JSON
   const localFiles = allJsonFiles.filter(f =>
-    f.id >= startId && f.id <= endId
+    f.id >= safeStart && f.id <= endId
   );
 
-  // Firebase
+  // 🔹 FIREBASE
   const snapshot = await db.collection("files")
-    .where("customId", ">=", startId)
+    .where("customId", ">=", safeStart)
     .where("customId", "<=", endId)
     .get();
 
@@ -80,6 +82,7 @@ async function loadPage(page) {
 
   const pageFiles = [...localFiles, ...firebaseFiles];
 
+  // 🔥 NEWEST FIRST
   pageFiles.sort((a, b) => b.id - a.id);
 
   pageCache[page] = pageFiles;
@@ -167,7 +170,7 @@ function goHome() {
   window.location.href = "index.html";
 }
 
-// ---------------- SEARCH (FULL FIX) ----------------
+// ---------------- SEARCH ----------------
 document.getElementById("search").addEventListener("input", async function (e) {
 
   const value = e.target.value.toLowerCase().trim();
@@ -212,7 +215,6 @@ document.getElementById("search").addEventListener("input", async function (e) {
   results.sort((a, b) => b.id - a.id);
 
   currentFiles = results;
-  fileList.innerHTML = "";
   displayFiles();
 });
 
