@@ -13,7 +13,25 @@
 
 <input type="text" id="image" placeholder="Image URL"><br><br>
 
-<textarea id="link" placeholder="Enter multiple links separated by comma"></textarea><br><br>
+<h3>Download Links</h3>
+
+<div id="links-container">
+  <div class="link-row">
+    <input type="text" placeholder="Enter link" class="link-input">
+    <input type="number" placeholder="Size" class="size-input">
+    <select class="size-unit">
+      <option value="KB">KB</option>
+      <option value="MB" selected>MB</option>
+      <option value="GB">GB</option>
+    </select>
+    <button onclick="removeRow(this)">❌</button>
+  </div>
+</div>
+
+<br>
+<button onclick="addLink()">➕ Add More</button>
+
+<br><br>
 
 <textarea id="description" placeholder="Description"></textarea><br><br>
 
@@ -47,6 +65,32 @@ auth.onAuthStateChanged(user => {
   }
 });
 
+// ➕ ADD LINK ROW
+function addLink() {
+  const container = document.getElementById("links-container");
+
+  const div = document.createElement("div");
+  div.classList.add("link-row");
+
+  div.innerHTML = `
+    <input type="text" placeholder="Enter link" class="link-input">
+    <input type="number" placeholder="Size" class="size-input">
+    <select class="size-unit">
+      <option value="KB">KB</option>
+      <option value="MB" selected>MB</option>
+      <option value="GB">GB</option>
+    </select>
+    <button onclick="removeRow(this)">❌</button>
+  `;
+
+  container.appendChild(div);
+}
+
+// ❌ REMOVE ROW
+function removeRow(btn) {
+  btn.parentElement.remove();
+}
+
 // ADD FILE
 async function addFile() {
 
@@ -55,8 +99,18 @@ async function addFile() {
   const fileCategory = document.getElementById("category").value.trim();
   const fileImage = document.getElementById("image").value.trim();
 
-  const linkInput = document.getElementById("link").value.trim();
-  const links = linkInput.split(",").map(l => l.trim()).filter(l => l);
+  const rows = document.querySelectorAll(".link-row");
+  let links = [];
+
+  rows.forEach(row => {
+    const url = row.querySelector(".link-input").value.trim();
+    const size = row.querySelector(".size-input").value.trim();
+    const unit = row.querySelector(".size-unit").value;
+
+    if (url) {
+      links.push({ url, size, unit });
+    }
+  });
 
   const fileDescription = document.getElementById("description").value.trim();
 
@@ -93,9 +147,12 @@ async function addFile() {
 
     alert("File added successfully! ID: " + nextId);
 
-    ["name","type","category","image","link","description"].forEach(id => {
+    ["name","type","category","image","description"].forEach(id => {
       document.getElementById(id).value = "";
     });
+
+    document.getElementById("links-container").innerHTML = "";
+    addLink();
 
   } catch (err) {
     console.error(err);
