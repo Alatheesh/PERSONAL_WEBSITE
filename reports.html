@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reports</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      text-align: center;
+    }
+
+    .box {
+      border: 1px solid #444;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 8px 12px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .delete {
+      background: red;
+      color: white;
+    }
+
+    /* 🔥 SWITCH */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      background-color: #ccc;
+      border-radius: 34px;
+      top: 0; left: 0; right: 0; bottom: 0;
+      transition: 0.4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.4s;
+    }
+
+    input:checked + .slider {
+      background: #4CAF50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  </style>
+
+</head>
+<body>
+
+<h2>Reports Panel</h2>
+
+<!-- 🔘 Toggle -->
+<label class="switch">
+  <input type="checkbox" id="toggle" onchange="toggleReports(this)">
+  <span class="slider"></span>
+</label>
+
+<p id="status">Loading...</p>
+
+<hr>
+
+<div id="reports">Loading...</div>
+
+<br>
+<button onclick="goBack()">← Back</button>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA8rEqkC8m8bmDi9UhnJuGuTqaWXY5CuKM",
+  authDomain: "filehub-counter.firebaseapp.com",
+  projectId: "filehub-counter"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// 🔒 Protect page
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    alert("Login first");
+    window.location.href = "admin.html";
+  } else {
+    loadReports();
+    loadToggle();
+  }
+});
+
+// 🔙 Back
+function goBack() {
+  window.location.href = "admin.html";
+}
+
+// 🔄 Load reports
+async function loadReports() {
+  const container = document.getElementById("reports");
+  container.innerHTML = "Loading...";
+
+  const snapshot = await db.collection("reports").orderBy("time","desc").get();
+
+  container.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+
+    container.innerHTML += `
+      <div class="box">
+        <strong>File ID:</strong> ${d.fileId}<br>
+        <strong>Message:</strong> ${d.message}<br>
+
+        <button class="delete" onclick="deleteReport('${doc.id}')">Delete</button>
+      </div>
+    `;
+  });
+
+  if (container.innerHTML === "") {
+    container.innerHTML = "No reports";
+  }
+}
+
+// 🗑 Delete
+async function deleteReport(id) {
+  if (!confirm("Delete report?")) return;
+
+  await db.collection("reports").doc(id).delete();
+  loadReports();
+}
+
+// 🔘 Load toggle state
+async function loadToggle() {
+  const doc = await db.collection("settings").doc("config").get();
+
+  let enabled = true;
+
+  if (doc.exists) {
+    enabled = doc.data().reportEnabled !== false;
+  }
+
+  document.getElementById("toggle").checked = enabled;
+  document.getElementById("status").innerText =
+    enabled ? "Reports: ON" : "Reports: OFF";
+}
+
+// 🔘 Toggle function
+async function toggleReports(el) {
+  const enabled = el.checked;
+
+  await db.collection("settings").doc("config").set({
+    reportEnabled: enabled
+  });
+
+  document.getElementById("status").innerText =
+    enabled ? "Reports: ON" : "Reports: OFF";
+}
+</script>
+
+</body>
+</html>
