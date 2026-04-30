@@ -10,67 +10,78 @@ window.addEventListener("DOMContentLoaded", function () {
   document.body.style.backgroundImage = `url('${backgrounds[randomIndex]}')`;
 });
 
-// ---------------- FILE DATA ----------------
-let allFiles = [];
+// ---------------- DATA ----------------
+let allJsonFiles = [];
+let pageCache = {};
 let currentFiles = [];
 let currentPage = 1;
 const itemsPerPage = 10;
 
 const fileList = document.getElementById("fileList");
 
-// ---------------- LOAD FILES ----------------
-async function loadFiles() {
-  try {
+// ---------------- LOAD JSON ONCE ----------------
+async function loadJSON() {
+  const res = await fetch("files.json");
+  allJsonFiles = await res.json();
+}
 
-    // 🔹 LOCAL JSON
-    const res = await fetch("files.json");
-    const localFiles = await res.json();
+// ---------------- LOAD PAGE (OPTIMIZED) ----------------
+async function loadPage(page) {
 
-    // 🔹 FIREBASE DATA
-    const snapshot = await db.collection("files").get();
-
-    const firebaseFiles = [];
-    snapshot.forEach(doc => {
-      const d = doc.data();
-
-      firebaseFiles.push({
-        id: d.customId,
-        name: d.name,
-        type: d.type,
-        category: d.category,
-        description: d.description || "",
-        image: d.image || "",
-        downloads: d.links || []   // ✅ FIXED
-      });
-    });
-
-    // 🔥 MERGE
-    allFiles = [...localFiles, ...firebaseFiles];
-
-    // 🔥 SORT
-    allFiles.sort((a, b) => b.id - a.id);
-
-    currentFiles = allFiles;
-
+  // 🔥 Cache check
+  if (pageCache[page]) {
+    console.log("⚡ Loaded from cache");
+    currentFiles = pageCache[page];
     displayFiles();
-
-  } catch (err) {
-    console.error("Load error:", err);
-    fileList.innerHTML = "<p style='color:red;'>Error loading files</p>";
+    return;
   }
+
+  const startId = (page - 1) * itemsPerPage + 1;
+  const endId = page * itemsPerPage;
+
+  console.log(`🔥 Loading IDs ${startId} to ${endId}`);
+
+  // 🔹 JSON FILTER
+  const localFiles = allJsonFiles.filter(f =>
+    f.id >= startId && f.id <= endId
+  );
+
+  // 🔹 FIREBASE QUERY
+  const snapshot = await db.collection("files")
+    .where("customId", ">=", startId)
+    .where("customId", "<=", endId)
+    .get();
+
+  const firebaseFiles = snapshot.docs.map(doc => {
+    const d = doc.data();
+    return {
+      id: d.customId,
+      name: d.name,
+      type: d.type,
+      category: d.category,
+      description: d.description || "",
+      image: d.image || "",
+      downloads: d.links || []
+    };
+  });
+
+  // 🔥 MERGE + SORT
+  const pageFiles = [...localFiles, ...firebaseFiles];
+  pageFiles.sort((a, b) => b.id - a.id);
+
+  // 🔥 SAVE CACHE
+  pageCache[page] = pageFiles;
+
+  currentFiles = pageFiles;
+
+  displayFiles();
 }
 
 // ---------------- DISPLAY FILES ----------------
 function displayFiles() {
   fileList.innerHTML = "";
 
-  const totalItems = currentFiles.length;
-  const start = (currentPage - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-
-  const paginatedFiles = currentFiles.slice(start, end);
-
-  paginatedFiles.forEach(file => {
+  currentFiles.forEach(file => {
     fileList.innerHTML += `
       <div class="file">
         <div>
@@ -87,15 +98,12 @@ function displayFiles() {
 
 // ---------------- PAGINATION ----------------
 function createPagination() {
-  const totalItems = currentFiles.length;
+
+  // ⚠️ total count (approx)
+  const totalItems = allJsonFiles.length + 50; // adjust if needed
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
   let html = '<div class="pagination">';
-
-  html += `<p class="page-info">Showing ${startItem}–${endItem} of ${totalItems} files</p>`;
 
   html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
 
@@ -107,7 +115,7 @@ function createPagination() {
     `;
   }
 
-  html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+  html += `<button onclick="goToPage(${currentPage + 1})">Next →</button>`;
 
   html += '</div>';
 
@@ -116,12 +124,10 @@ function createPagination() {
 
 // ---------------- PAGE SWITCH ----------------
 function goToPage(page) {
-  const totalPages = Math.ceil(currentFiles.length / itemsPerPage);
-
-  if (page < 1 || page > totalPages) return;
+  if (page < 1) return;
 
   currentPage = page;
-  displayFiles();
+  loadPage(page);
 }
 
 // ---------------- NAVIGATION ----------------
@@ -137,27 +143,41 @@ function goHome() {
 document.getElementById("search").addEventListener("input", function (e) {
   const value = e.target.value.toLowerCase();
 
-  currentPage = 1;
+  const filtered = [];
 
-  currentFiles = allFiles.filter(file =>
-    file.name.toLowerCase().includes(value) ||
-    file.category.toLowerCase().includes(value) ||
-    file.type.toLowerCase().includes(value)
-  );
+  // 🔍 Search in cached pages only
+  Object.values(pageCache).forEach(page => {
+    page.forEach(file => {
+      if (
+        file.name.toLowerCase().includes(value) ||
+        file.category.toLowerCase().includes(value) ||
+        file.type.toLowerCase().includes(value)
+      ) {
+        filtered.push(file);
+      }
+    });
+  });
 
+  currentFiles = filtered;
   displayFiles();
 });
 
 // ---------------- FILTER ----------------
 function filterFiles(type) {
-  currentPage = 1;
-
   if (type === "All") {
-    currentFiles = allFiles;
-  } else {
-    currentFiles = allFiles.filter(file => file.type === type);
+    loadPage(currentPage);
+    return;
   }
 
+  const filtered = [];
+
+  Object.values(pageCache).forEach(page => {
+    page.forEach(file => {
+      if (file.type === type) filtered.push(file);
+    });
+  });
+
+  currentFiles = filtered;
   displayFiles();
 }
 
@@ -184,4 +204,7 @@ if (toggleBtn) {
 }
 
 // ---------------- INIT ----------------
-loadFiles();
+(async function init() {
+  await loadJSON();
+  loadPage(1);
+})();
