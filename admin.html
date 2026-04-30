@@ -24,31 +24,16 @@
   <button onclick="goTo('delete.html')">Delete File</button><br><br>
   <button onclick="goTo('export.html')">Export Data</button><br><br>
 
-  <!-- 🔥 NEW BUTTON -->
-  <button onclick="showReports()">Reports</button><br><br>
+  <!-- ✅ REPORTS PAGE BUTTON -->
+  <button onclick="goTo('reports.html')">Reports</button><br><br>
 
   <button onclick="logout()">Logout</button>
-
-</div>
-
-<!-- 📊 REPORT SECTION -->
-<div id="reportBox" style="display:none; text-align:center;">
-
-  <h3>Reports</h3>
-
-  <button onclick="toggleReports()">🔘 Toggle ON/OFF</button><br><br>
-
-  <div id="reportsList">Loading...</div>
-
-  <br>
-  <button onclick="goBackMenu()">← Back</button>
 
 </div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -60,7 +45,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
-const db = firebase.firestore();
 
 // ✅ persistence
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -87,7 +71,6 @@ function logout() {
 function showMenu() {
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("menuBox").style.display = "block";
-  document.getElementById("reportBox").style.display = "none";
 }
 
 // AUTH LISTENER
@@ -97,7 +80,6 @@ auth.onAuthStateChanged(user => {
   } else {
     document.getElementById("loginBox").style.display = "block";
     document.getElementById("menuBox").style.display = "none";
-    document.getElementById("reportBox").style.display = "none";
   }
 });
 
@@ -105,79 +87,6 @@ auth.onAuthStateChanged(user => {
 function goTo(page) {
   window.location.href = page;
 }
-
-//////////////////////////////////////////////////////
-// 🔥 REPORT SYSTEM
-//////////////////////////////////////////////////////
-
-// SHOW REPORT PAGE
-function showReports() {
-  document.getElementById("menuBox").style.display = "none";
-  document.getElementById("reportBox").style.display = "block";
-  loadReports();
-}
-
-// BACK TO MENU
-function goBackMenu() {
-  document.getElementById("reportBox").style.display = "none";
-  document.getElementById("menuBox").style.display = "block";
-}
-
-// LOAD REPORTS
-async function loadReports() {
-  const container = document.getElementById("reportsList");
-  container.innerHTML = "Loading...";
-
-  const snapshot = await db.collection("reports").orderBy("time","desc").get();
-
-  container.innerHTML = "";
-
-  snapshot.forEach(doc => {
-    const d = doc.data();
-
-    container.innerHTML += `
-      <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-        <strong>File ID:</strong> ${d.fileId}<br>
-        <strong>Message:</strong> ${d.message}<br>
-
-        <button onclick="deleteReport('${doc.id}')">🗑 Delete</button>
-      </div>
-    `;
-  });
-
-  if (container.innerHTML === "") {
-    container.innerHTML = "No reports";
-  }
-}
-
-// DELETE REPORT
-async function deleteReport(id) {
-  if (!confirm("Delete this report?")) return;
-
-  await db.collection("reports").doc(id).delete();
-
-  loadReports();
-}
-
-// TOGGLE REPORT ON/OFF
-async function toggleReports() {
-  const ref = db.collection("settings").doc("config");
-
-  const doc = await ref.get();
-
-  let current = true;
-
-  if (doc.exists) {
-    current = doc.data().reportEnabled !== false;
-  }
-
-  await ref.set({
-    reportEnabled: !current
-  });
-
-  alert("Reports are now " + (!current ? "ENABLED" : "DISABLED"));
-}
-
 </script>
 
 </body>
