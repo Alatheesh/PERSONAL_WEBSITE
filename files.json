@@ -6,8 +6,8 @@
     "category": "eee",
     "description": "",
     "image": "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
-    "downloads": [
-      "https://images3.alphacoders.com/137/thumb-1920-1373768.png"
+    "links": [
+      { "url": "https://images3.alphacoders.com/137/thumb-1920-1373768.png", "size": "1.2", "unit": "MB" }
     ]
   },
   {
@@ -17,12 +17,12 @@
     "category": "eee",
     "description": "super",
     "image": "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
-    "downloads": [
-      "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
-      "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
-      "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
-      "https://images3.alphacoders.com/137/thumb-1920-1373768.png",
-      "https://images3.alphacoders.com/137/thumb-1920-1373768.png"
+    "links": [
+      { "url": "https://images3.alphacoders.com/137/thumb-1920-1373768.png", "size": "2.5", "unit": "MB" },
+      { "url": "https://images3.alphacoders.com/137/thumb-1920-1373768.png", "size": "3.1", "unit": "MB" },
+      { "url": "https://images3.alphacoders.com/137/thumb-1920-1373768.png", "size": "1.8", "unit": "MB" },
+      { "url": "https://images3.alphacoders.com/137/thumb-1920-1373768.png", "size": "2.0", "unit": "MB" },
+      { "url": "https://images3.alphacoders.com/137/thumb-1920-1373768.png", "size": "2.2", "unit": "MB" }
     ]
   },
   {
@@ -32,8 +32,8 @@
     "category": "CSE",
     "description": "SQL and DB concepts.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/db.pdf"
+    "links": [
+      { "url": "https://example.com/db.pdf", "size": "4.2", "unit": "MB" }
     ]
   },
   {
@@ -43,8 +43,8 @@
     "category": "CSE",
     "description": "Protocols and networking basics.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/network.pdf"
+    "links": [
+      { "url": "https://example.com/network.pdf", "size": "3.8", "unit": "MB" }
     ]
   },
   {
@@ -54,8 +54,8 @@
     "category": "CSE",
     "description": "Processes, memory management.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/os.pdf"
+    "links": [
+      { "url": "https://example.com/os.pdf", "size": "5.0", "unit": "MB" }
     ]
   },
   {
@@ -65,8 +65,8 @@
     "category": "CSE",
     "description": "Stacks, queues, trees.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/ds.pdf"
+    "links": [
+      { "url": "https://example.com/ds.pdf", "size": "3.2", "unit": "MB" }
     ]
   },
   {
@@ -76,8 +76,8 @@
     "category": "Mechanical",
     "description": "Fluid flow concepts.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/fluid.pdf"
+    "links": [
+      { "url": "https://example.com/fluid.pdf", "size": "4.5", "unit": "MB" }
     ]
   },
   {
@@ -87,8 +87,8 @@
     "category": "Mechanical",
     "description": "Forces and motion.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/mechanics.pdf"
+    "links": [
+      { "url": "https://example.com/mechanics.pdf", "size": "3.9", "unit": "MB" }
     ]
   },
   {
@@ -98,8 +98,8 @@
     "category": "Physics",
     "description": "Quantum theory basics.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/quantum.pdf"
+    "links": [
+      { "url": "https://example.com/quantum.pdf", "size": "6.1", "unit": "MB" }
     ]
   },
   {
@@ -109,8 +109,8 @@
     "category": "Physics",
     "description": "Heat and energy systems.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/thermo.pdf"
+    "links": [
+      { "url": "https://example.com/thermo.pdf", "size": "4.7", "unit": "MB" }
     ]
   },
   {
@@ -120,8 +120,8 @@
     "category": "EEE",
     "description": "Transmission and distribution.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/power.pdf"
+    "links": [
+      { "url": "https://example.com/power.pdf", "size": "3.6", "unit": "MB" }
     ]
   },
   {
@@ -131,8 +131,8 @@
     "category": "EEE",
     "description": "Signal analysis and transforms.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/signals.pdf"
+    "links": [
+      { "url": "https://example.com/signals.pdf", "size": "4.1", "unit": "MB" }
     ]
   },
   {
@@ -142,8 +142,8 @@
     "category": "EEE",
     "description": "Control theory basics and systems.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/control.pdf"
+    "links": [
+      { "url": "https://example.com/control.pdf", "size": "3.3", "unit": "MB" }
     ]
   },
   {
@@ -153,8 +153,8 @@
     "category": "EEE",
     "description": "Logic gates, flip-flops and circuits.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/digital1.pdf"
+    "links": [
+      { "url": "https://example.com/digital1.pdf", "size": "2.9", "unit": "MB" }
     ]
   },
   {
@@ -164,9 +164,9 @@
     "category": "EEE",
     "description": "Detailed notes on transformers, motors, and generators.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/electrical1.pdf",
-      "https://example.com/electrical2.pdf"
+    "links": [
+      { "url": "https://example.com/electrical1.pdf", "size": "4.8", "unit": "MB" },
+      { "url": "https://example.com/electrical2.pdf", "size": "5.1", "unit": "MB" }
     ]
   },
   {
@@ -176,9 +176,9 @@
     "category": "Physics",
     "description": "Collection of important physics formulas and derivations.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/physics1.pdf",
-      "https://example.com/physics2.pdf"
+    "links": [
+      { "url": "https://example.com/physics1.pdf", "size": "3.7", "unit": "MB" },
+      { "url": "https://example.com/physics2.pdf", "size": "4.0", "unit": "MB" }
     ]
   },
   {
@@ -188,9 +188,9 @@
     "category": "EEE",
     "description": "Important formulas and concepts for exams and quick revision.",
     "image": "https://i.ibb.co/zVghvnXB/download.png",
-    "downloads": [
-      "https://example.com/file1.pdf",
-      "https://example.com/file2.pdf"
+    "links": [
+      { "url": "https://example.com/file1.pdf", "size": "2.5", "unit": "MB" },
+      { "url": "https://example.com/file2.pdf", "size": "3.0", "unit": "MB" }
     ]
   }
 ]
