@@ -21,7 +21,7 @@
       width: 350px;
       text-align: center;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      margin-top: 40px;
+      margin-top: 60px; /* space for top button */
     }
 
     .card img {
@@ -60,24 +60,28 @@
       width: 100%;
     }
 
-    /* 🔥 REPORT BUTTON NORMAL (NO FIXED) */
-    #reportContainer {
-      margin: 20px 0;
+    /* 🔥 TOP RIGHT REPORT BUTTON */
+    #reportBtn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #ff4444;
+      padding: 10px 14px;
+      border-radius: 8px;
+      z-index: 1000;
     }
 
-    #reportBtn {
-      background: #ff4444;
-      width: 80%;
-      max-width: 300px;
+    #reportBtn:hover {
+      background: #ff2222;
     }
   </style>
 </head>
 <body>
 
-<div class="card" id="fileCard">Loading...</div>
+<!-- 🔥 REPORT BUTTON (TOP RIGHT) -->
+<button id="reportBtn" onclick="reportIssue()">⚠ Report</button>
 
-<!-- 🔥 Report button -->
-<div id="reportContainer"></div>
+<div class="card" id="fileCard">Loading...</div>
 
 <button class="back" onclick="history.back()">← Back</button>
 
@@ -141,17 +145,6 @@ async function loadFile() {
     links = [file.link];
   }
 
-  let reportEnabled = true;
-
-  try {
-    const settingsDoc = await db.collection("settings").doc("config").get();
-    if (settingsDoc.exists) {
-      reportEnabled = settingsDoc.data().reportEnabled !== false;
-    }
-  } catch (e) {
-    console.log("Settings fetch error", e);
-  }
-
   // 🔥 UI WITH GRID
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
@@ -186,12 +179,6 @@ async function loadFile() {
       : "<p style='opacity:0.7;'>No download link available</p>"
     }
   `;
-
-  if (reportEnabled) {
-    document.getElementById("reportContainer").innerHTML = `
-      <button id="reportBtn" onclick="reportIssue()">⚠ Report Issue</button>
-    `;
-  }
 }
 
 function reportIssue() {
