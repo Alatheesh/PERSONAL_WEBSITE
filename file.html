@@ -26,6 +26,7 @@
 
     .center {
       max-width: 400px;
+      width: 100%; /* Ensures the center column doesn't collapse */
     }
 
     @media (max-width: 900px) {
@@ -40,6 +41,11 @@
       border-radius: 12px;
       text-align: center;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      
+      /* 🔥 FIX: Forces long URLs to wrap inside the box instead of overflowing */
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .card img {
@@ -66,7 +72,7 @@
       display: block;
     }
 
-    /* 🔥 MODIFIED: Forces exactly 2 buttons side-by-side */
+    /* 2-by-2 Button Layout */
     .download-grid {
       display: grid;
       grid-template-columns: 1fr 1fr; 
@@ -74,7 +80,6 @@
       margin-top: 15px;
     }
 
-    /* 🔥 Added: Ensures the buttons fill their grid slots evenly */
     .download-grid button {
       width: 100%;
       margin: 0;
@@ -135,7 +140,7 @@
     <div class="card" id="fileCard">Loading...</div>
   </div>
 
-  <!-- RIGHT AD (NEW SLOT) -->
+  <!-- RIGHT AD -->
   <div class="side-ad">
     <script>
       atOptions = {
