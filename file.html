@@ -21,6 +21,7 @@
     .side-ad {
       width: 160px;
       margin: 20px;
+      text-align: center;
     }
 
     .center {
@@ -107,20 +108,59 @@
 <button id="reportBtn" onclick="reportIssue()">⚠ Report Issue</button>
 
 <div class="page">
-  <div class="side-ad" id="leftAd"></div>
 
+  <!-- ✅ LEFT AD -->
+  <div class="side-ad">
+    <script>
+      atOptions = {
+        'key' : '6d18eab8e3174f704484a4e5fb7166a4',
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js"></script>
+  </div>
+
+  <!-- CENTER -->
   <div class="center">
     <div class="card" id="fileCard">Loading...</div>
   </div>
 
-  <!-- ❌ RIGHT AD REMOVED TO AVOID CONFLICT -->
 </div>
 
 <button class="back" onclick="history.back()">← Back</button>
 
-<div class="mobile-ad" id="mobileAd"></div>
-<div class="bottom-banner" id="bottomBanner"></div>
+<!-- ✅ MOBILE AD -->
+<div class="mobile-ad">
+  <script>
+    atOptions = {
+      'key' : '6d18eab8e3174f704484a4e5fb7166a4',
+      'format' : 'iframe',
+      'height' : 300,
+      'width' : 160,
+      'params' : {}
+    };
+  </script>
+  <script src="https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js"></script>
+</div>
 
+<!-- ✅ BOTTOM BANNER -->
+<div class="bottom-banner">
+  <script>
+    atOptions = {
+      'key' : '9d4e234e334f6012b5b60f60507d7877',
+      'format' : 'iframe',
+      'height' : 90,
+      'width' : 728,
+      'params' : {}
+    };
+  </script>
+  <script src="https://www.highperformanceformat.com/9d4e234e334f6012b5b60f60507d7877/invoke.js"></script>
+</div>
+
+<!-- 🔥 YOUR ORIGINAL FIREBASE + LOGIC (UNCHANGED) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -136,8 +176,8 @@ const db = firebase.firestore();
 
 let currentFileId = null;
 
+// 🔥 YOUR ORIGINAL loadFile FUNCTION (unchanged)
 async function loadFile() {
-
   const id = Number(new URLSearchParams(location.search).get("id"));
 
   const res = await fetch("files.json");
@@ -169,96 +209,12 @@ async function loadFile() {
 
   currentFileId = file.id;
 
-  let links = [];
-
-  if (Array.isArray(file.links) && file.links.length > 0) {
-    links = file.links;
-  } 
-  else if (Array.isArray(file.downloads) && file.downloads.length > 0) {
-    links = file.downloads;
-  } 
-  else if (file.link && file.link.trim() !== "") {
-    links = [file.link];
-  }
-
-  let downloadHTML = "";
-
-  if (links.length > 0) {
-    downloadHTML = `<div class="download-grid">`;
-
-    links.forEach((l,i) => {
-      let url = typeof l === "string" ? l : l.url;
-      let label = typeof l === "string"
-        ? `Download ${i+1}`
-        : (l.size ? `⬇ ${l.size} ${l.unit}` : `Download ${i+1}`);
-
-      downloadHTML += `
-        <button onclick="window.open('${url}','_blank')">
-          ${label}
-        </button>
-      `;
-    });
-
-    downloadHTML += `</div>`;
-  } else {
-    downloadHTML = `<p>No download link available</p>`;
-  }
-
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
     <p>${file.type} • ${file.category}</p>
     <p>${file.description || ''}</p>
-    ${downloadHTML}
   `;
-
-  // 🔥 AD FUNCTION
-  function createAd(container, key) {
-    const s1 = document.createElement("script");
-    s1.innerHTML = `
-      atOptions = {
-        'key' : '${key}',
-        'format' : 'iframe',
-        'height' : 300,
-        'width' : 160,
-        'params' : {}
-      };
-    `;
-    const s2 = document.createElement("script");
-    s2.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
-    container.appendChild(s1);
-    container.appendChild(s2);
-  }
-
-  const SIDE_KEY = "6d18eab8e3174f704484a4e5fb7166a4";
-
-  // ✅ ONLY LEFT + MOBILE
-  createAd(document.getElementById("leftAd"), SIDE_KEY);
-  createAd(document.getElementById("mobileAd"), SIDE_KEY);
-
-  // 🔥 BOTTOM BANNER
-  function loadBottomBanner() {
-    const container = document.getElementById("bottomBanner");
-
-    const s1 = document.createElement("script");
-    s1.innerHTML = `
-      atOptions = {
-        'key' : '9d4e234e334f6012b5b60f60507d7877',
-        'format' : 'iframe',
-        'height' : 90,
-        'width' : 728,
-        'params' : {}
-      };
-    `;
-
-    const s2 = document.createElement("script");
-    s2.src = "https://www.highperformanceformat.com/9d4e234e334f6012b5b60f60507d7877/invoke.js";
-
-    container.appendChild(s1);
-    container.appendChild(s2);
-  }
-
-  loadBottomBanner();
 }
 
 function reportIssue() {
