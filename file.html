@@ -22,13 +22,13 @@
     .side-ad {
       width: 160px;
       margin: 20px;
-      overflow: hidden; /* 🔥 FIX: prevents overlap */
     }
 
     .center {
       max-width: 400px;
     }
 
+    /* ❌ Hide side ads on mobile */
     @media (max-width: 900px) {
       .side-ad {
         display: none;
@@ -74,7 +74,7 @@
       margin-top: 15px;
     }
 
-    /* 🔥 MOBILE AD */
+    /* 🔥 MOBILE AD (below back button only) */
     .mobile-ad {
       display: none;
       text-align: center;
@@ -120,6 +120,7 @@
 
 <button class="back" onclick="history.back()">← Back</button>
 
+<!-- 🔥 MOBILE AD -->
 <div class="mobile-ad" id="mobileAd"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -213,34 +214,32 @@ async function loadFile() {
     ${downloadHTML}
   `;
 
-  // 🔥 SAFE AD FUNCTION (FIXED)
+  // 🔥 YOUR NEW AD CODE (160x300)
   function createAd(container) {
-    const wrapper = document.createElement("div");
-    wrapper.style.width = "100%";
-    wrapper.style.maxWidth = "160px";
-    wrapper.style.overflow = "hidden";
 
     const s1 = document.createElement("script");
     s1.innerHTML = `
       atOptions = {
-        'key' : 'c371556f2f761e68ac3fdb0215382818',
+        'key' : '6d18eab8e3174f704484a4e5fb7166a4',
         'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
+        'height' : 300,
+        'width' : 160,
         'params' : {}
       };
     `;
 
     const s2 = document.createElement("script");
-    s2.src = "https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js";
+    s2.src = "https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js";
 
-    wrapper.appendChild(s1);
-    wrapper.appendChild(s2);
-    container.appendChild(wrapper);
+    container.appendChild(s1);
+    container.appendChild(s2);
   }
 
+  // DESKTOP ADS
   createAd(document.getElementById("leftAd"));
   createAd(document.getElementById("rightAd"));
+
+  // MOBILE AD
   createAd(document.getElementById("mobileAd"));
 }
 
