@@ -8,20 +8,39 @@
       font-family: Arial;
       background: #111;
       color: white;
+    }
+
+    /* 🔥 LAYOUT */
+    .page {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      margin-top: 60px;
+    }
+
+    .side-ad {
+      width: 160px;
+      margin: 20px;
+    }
+
+    .center {
+      max-width: 400px;
+    }
+
+    /* ❌ HIDE SIDE ADS ON MOBILE */
+    @media (max-width: 900px) {
+      .side-ad {
+        display: none;
+      }
     }
 
     .card {
       background: rgba(255,255,255,0.05);
       padding: 30px;
       border-radius: 12px;
-      width: 350px;
       text-align: center;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      margin-top: 60px;
     }
 
     .card img {
@@ -44,8 +63,8 @@
 
     .back {
       background: #555;
-      margin-top: 10px;
-      margin-bottom: 30px;
+      margin: 20px auto;
+      display: block;
     }
 
     .download-grid {
@@ -55,13 +74,17 @@
       margin-top: 15px;
     }
 
-    .download-grid button {
-      width: 100%;
+    /* 🔥 MOBILE AD (ONLY BELOW BACK BUTTON) */
+    .mobile-ad {
+      display: none;
+      text-align: center;
+      margin: 20px;
     }
 
-    .ad {
-      margin: 20px 0;
-      text-align: center;
+    @media (max-width: 900px) {
+      .mobile-ad {
+        display: block;
+      }
     }
 
     #reportBtn {
@@ -80,9 +103,25 @@
 
 <button id="reportBtn" onclick="reportIssue()">⚠ Report Issue</button>
 
-<div class="card" id="fileCard">Loading...</div>
+<div class="page">
+
+  <!-- LEFT AD -->
+  <div class="side-ad" id="leftAd"></div>
+
+  <!-- CENTER -->
+  <div class="center">
+    <div class="card" id="fileCard">Loading...</div>
+  </div>
+
+  <!-- RIGHT AD -->
+  <div class="side-ad" id="rightAd"></div>
+
+</div>
 
 <button class="back" onclick="history.back()">← Back</button>
+
+<!-- 🔥 MOBILE AD BELOW BACK BUTTON -->
+<div class="mobile-ad" id="mobileAd"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -140,35 +179,20 @@ async function loadFile() {
   else if (Array.isArray(file.downloads) && file.downloads.length > 0) {
     links = file.downloads;
   } 
-  else if (file.link && typeof file.link === "string" && file.link.trim() !== "") {
+  else if (file.link && file.link.trim() !== "") {
     links = [file.link];
   }
 
-  // REPORT BUTTON
-  try {
-    const settingsDoc = await db.collection("settings").doc("config").get();
-    const enabled = settingsDoc.exists ? settingsDoc.data().reportEnabled !== false : true;
-    document.getElementById("reportBtn").style.display = enabled ? "block" : "none";
-  } catch {}
-
-  // DOWNLOAD BUTTONS
   let downloadHTML = "";
 
   if (links.length > 0) {
     downloadHTML = `<div class="download-grid">`;
 
     links.forEach((l,i) => {
-      let url, label;
-
-      if (typeof l === "string") {
-        url = l;
-        label = `Download ${i+1}`;
-      } else {
-        url = l.url;
-        label = l.size
-          ? `⬇ Download ${l.size} ${l.unit}`
-          : `Download ${i+1}`;
-      }
+      let url = typeof l === "string" ? l : l.url;
+      let label = typeof l === "string"
+        ? `Download ${i+1}`
+        : (l.size ? `⬇ ${l.size} ${l.unit}` : `Download ${i+1}`);
 
       downloadHTML += `
         <button onclick="window.open('${url}','_blank')">
@@ -179,40 +203,43 @@ async function loadFile() {
 
     downloadHTML += `</div>`;
   } else {
-    downloadHTML = `<p style="opacity:0.7;">No download link available</p>`;
+    downloadHTML = `<p>No download link available</p>`;
   }
 
-  // UI
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
     <p>${file.type} • ${file.category}</p>
     <p>${file.description || ''}</p>
-
-    <div class="ad" id="adContainer"></div>
-
     ${downloadHTML}
   `;
 
-  // 🔥 CORRECT AD INSERTION
-  const adContainer = document.getElementById("adContainer");
+  // 🔥 AD FUNCTION
+  function createAd(container) {
+    const s1 = document.createElement("script");
+    s1.innerHTML = `
+      atOptions = {
+        'key' : 'c371556f2f761e68ac3fdb0215382818',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
 
-  const script1 = document.createElement("script");
-  script1.innerHTML = `
-    atOptions = {
-      'key' : 'c371556f2f761e68ac3fdb0215382818',
-      'format' : 'iframe',
-      'height' : 250,
-      'width' : 300,
-      'params' : {}
-    };
-  `;
+    const s2 = document.createElement("script");
+    s2.src = "https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js";
 
-  const script2 = document.createElement("script");
-  script2.src = "https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js";
+    container.appendChild(s1);
+    container.appendChild(s2);
+  }
 
-  adContainer.appendChild(script1);
-  adContainer.appendChild(script2);
+  // DESKTOP ADS
+  createAd(document.getElementById("leftAd"));
+  createAd(document.getElementById("rightAd"));
+
+  // MOBILE AD
+  createAd(document.getElementById("mobileAd"));
 }
 
 function reportIssue() {
