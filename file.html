@@ -21,7 +21,7 @@
       width: 350px;
       text-align: center;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      margin-top: 60px; /* space for top button */
+      margin-top: 60px;
     }
 
     .card img {
@@ -48,7 +48,7 @@
       margin-bottom: 30px;
     }
 
-    /* 🔥 GRID FOR DOWNLOAD BUTTONS */
+    /* GRID */
     .download-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -60,7 +60,7 @@
       width: 100%;
     }
 
-    /* 🔥 TOP RIGHT REPORT BUTTON */
+    /* 🔥 REPORT BUTTON (hidden by default) */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -69,6 +69,7 @@
       padding: 10px 14px;
       border-radius: 8px;
       z-index: 1000;
+      display: none; /* 🔥 IMPORTANT */
     }
 
     #reportBtn:hover {
@@ -78,7 +79,6 @@
 </head>
 <body>
 
-<!-- 🔥 REPORT BUTTON (TOP RIGHT) -->
 <button id="reportBtn" onclick="reportIssue()">⚠ Report</button>
 
 <div class="card" id="fileCard">Loading...</div>
@@ -145,7 +145,26 @@ async function loadFile() {
     links = [file.link];
   }
 
-  // 🔥 UI WITH GRID
+  // 🔥 CHECK REPORT TOGGLE
+  let reportEnabled = true;
+
+  try {
+    const settingsDoc = await db.collection("settings").doc("config").get();
+    if (settingsDoc.exists) {
+      reportEnabled = settingsDoc.data().reportEnabled !== false;
+    }
+  } catch (e) {
+    console.log("Settings fetch error", e);
+  }
+
+  // 🔥 CONTROL BUTTON VISIBILITY
+  if (reportEnabled) {
+    document.getElementById("reportBtn").style.display = "block";
+  } else {
+    document.getElementById("reportBtn").style.display = "none";
+  }
+
+  // 🔥 UI
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
