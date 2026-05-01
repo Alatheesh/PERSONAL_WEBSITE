@@ -10,7 +10,6 @@
       color: white;
     }
 
-    /* 🔥 LAYOUT */
     .page {
       display: flex;
       justify-content: center;
@@ -28,7 +27,6 @@
       max-width: 400px;
     }
 
-    /* ❌ Hide side ads on mobile */
     @media (max-width: 900px) {
       .side-ad {
         display: none;
@@ -74,7 +72,7 @@
       margin-top: 15px;
     }
 
-    /* 🔥 MOBILE AD (below back button only) */
+    /* MOBILE AD */
     .mobile-ad {
       display: none;
       text-align: center;
@@ -85,6 +83,13 @@
       .mobile-ad {
         display: block;
       }
+    }
+
+    /* 🔥 NEW BOTTOM BANNER */
+    .bottom-banner {
+      width: 100%;
+      text-align: center;
+      margin: 20px 0;
     }
 
     #reportBtn {
@@ -105,15 +110,12 @@
 
 <div class="page">
 
-  <!-- LEFT AD -->
   <div class="side-ad" id="leftAd"></div>
 
-  <!-- CENTER -->
   <div class="center">
     <div class="card" id="fileCard">Loading...</div>
   </div>
 
-  <!-- RIGHT AD -->
   <div class="side-ad" id="rightAd"></div>
 
 </div>
@@ -122,6 +124,9 @@
 
 <!-- 🔥 MOBILE AD -->
 <div class="mobile-ad" id="mobileAd"></div>
+
+<!-- 🔥 NEW BOTTOM BANNER -->
+<div class="bottom-banner" id="bottomBanner"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -214,9 +219,8 @@ async function loadFile() {
     ${downloadHTML}
   `;
 
-  // 🔥 YOUR NEW AD CODE (160x300)
+  // SIDE + MOBILE ADS
   function createAd(container) {
-
     const s1 = document.createElement("script");
     s1.innerHTML = `
       atOptions = {
@@ -227,20 +231,39 @@ async function loadFile() {
         'params' : {}
       };
     `;
-
     const s2 = document.createElement("script");
     s2.src = "https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js";
+    container.appendChild(s1);
+    container.appendChild(s2);
+  }
+
+  createAd(document.getElementById("leftAd"));
+  createAd(document.getElementById("rightAd"));
+  createAd(document.getElementById("mobileAd"));
+
+  // 🔥 BOTTOM BANNER (728x90)
+  function loadBottomBanner() {
+    const container = document.getElementById("bottomBanner");
+
+    const s1 = document.createElement("script");
+    s1.innerHTML = `
+      atOptions = {
+        'key' : '9d4e234e334f6012b5b60f60507d7877',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    `;
+
+    const s2 = document.createElement("script");
+    s2.src = "https://www.highperformanceformat.com/9d4e234e334f6012b5b60f60507d7877/invoke.js";
 
     container.appendChild(s1);
     container.appendChild(s2);
   }
 
-  // DESKTOP ADS
-  createAd(document.getElementById("leftAd"));
-  createAd(document.getElementById("rightAd"));
-
-  // MOBILE AD
-  createAd(document.getElementById("mobileAd"));
+  loadBottomBanner();
 }
 
 function reportIssue() {
