@@ -103,7 +103,7 @@
       margin: 20px 0;
     }
 
-    /* 🔥 FIX: hidden by default */
+    /* 🔥 FIX: hide by default */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -197,13 +197,13 @@ const db = firebase.firestore();
 
 let currentFileId = null;
 
-/* 🔥 FIX: toggle control */
-(function () {
+/* 🔥 FIX: run AFTER page loads */
+window.addEventListener("DOMContentLoaded", function () {
   const enabled = localStorage.getItem("reportEnabled");
   if (enabled === "true") {
     document.getElementById("reportBtn").style.display = "block";
   }
-})();
+});
 
 async function loadFile() {
   const id = Number(new URLSearchParams(location.search).get("id"));
