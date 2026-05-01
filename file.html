@@ -113,7 +113,7 @@
     <div class="card" id="fileCard">Loading...</div>
   </div>
 
-  <div class="side-ad" id="rightAd"></div>
+  <!-- ❌ RIGHT AD REMOVED TO AVOID CONFLICT -->
 </div>
 
 <button class="back" onclick="history.back()">← Back</button>
@@ -212,7 +212,7 @@ async function loadFile() {
     ${downloadHTML}
   `;
 
-  // 🔥 MULTI-AD SUPPORT
+  // 🔥 AD FUNCTION
   function createAd(container, key) {
     const s1 = document.createElement("script");
     s1.innerHTML = `
@@ -230,11 +230,10 @@ async function loadFile() {
     container.appendChild(s2);
   }
 
-  // 🔥 YOUR CURRENT KEY
   const SIDE_KEY = "6d18eab8e3174f704484a4e5fb7166a4";
 
+  // ✅ ONLY LEFT + MOBILE
   createAd(document.getElementById("leftAd"), SIDE_KEY);
-  createAd(document.getElementById("rightAd"), SIDE_KEY); // may not show (normal)
   createAd(document.getElementById("mobileAd"), SIDE_KEY);
 
   // 🔥 BOTTOM BANNER
