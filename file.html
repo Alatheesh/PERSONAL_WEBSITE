@@ -151,7 +151,7 @@ async function loadFile() {
     document.getElementById("reportBtn").style.display = enabled ? "block" : "none";
   } catch {}
 
-  // BUILD DOWNLOAD BUTTONS FIRST
+  // DOWNLOAD BUTTONS
   let downloadHTML = "";
 
   if (links.length > 0) {
@@ -182,7 +182,7 @@ async function loadFile() {
     downloadHTML = `<p style="opacity:0.7;">No download link available</p>`;
   }
 
-  // FINAL UI (NO SCRIPT INSIDE TEMPLATE)
+  // UI
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
@@ -194,21 +194,25 @@ async function loadFile() {
     ${downloadHTML}
   `;
 
-  // INSERT AD AFTER RENDER (IMPORTANT FIX)
+  // 🔥 CORRECT AD INSERTION
   const adContainer = document.getElementById("adContainer");
 
-  adContainer.innerHTML = `
-    <script>
-      atOptions = {
-        'key' : 'c371556f2f761e68ac3fdb0215382818',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    <\/script>
-    <script src="https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js"><\/script>
+  const script1 = document.createElement("script");
+  script1.innerHTML = `
+    atOptions = {
+      'key' : 'c371556f2f761e68ac3fdb0215382818',
+      'format' : 'iframe',
+      'height' : 250,
+      'width' : 300,
+      'params' : {}
+    };
   `;
+
+  const script2 = document.createElement("script");
+  script2.src = "https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js";
+
+  adContainer.appendChild(script1);
+  adContainer.appendChild(script2);
 }
 
 function reportIssue() {
