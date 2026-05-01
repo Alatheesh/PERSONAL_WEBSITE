@@ -117,6 +117,19 @@ body.dark #search {
   align-items: center;
 
   transition: all 0.3s ease;
+  
+  /* 🔥 FIX: Ensures container doesn't stretch past the screen */
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+/* 🔥 FIX: Forces long text/URLs to wrap inside the search list */
+.file > div {
+  flex: 1;
+  min-width: 0; /* CRITICAL: Allows flex child to shrink and text to wrap */
+  padding-right: 15px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .file:hover {
