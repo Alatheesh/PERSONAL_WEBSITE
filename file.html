@@ -41,8 +41,6 @@
       border-radius: 12px;
       text-align: center;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      
-      /* Forces long URLs to wrap inside the box */
       overflow-wrap: break-word;
       word-wrap: break-word;
       word-break: break-word;
@@ -72,7 +70,6 @@
       display: block;
     }
 
-    /* 🔥 SMART LAYOUT: 1 button = 100% width, 2+ buttons = side-by-side */
     .download-grid {
       display: flex;
       flex-wrap: wrap;
@@ -81,8 +78,8 @@
     }
 
     .download-grid button {
-      flex: 1; /* Grows to fill available space */
-      min-width: 130px; /* Prevents buttons from getting too squished */
+      flex: 1;
+      min-width: 130px;
       margin: 0;
       box-sizing: border-box;
       padding: 10px 5px;
@@ -123,7 +120,6 @@
 
 <div class="page">
 
-  <!-- LEFT AD -->
   <div class="side-ad">
     <script>
       atOptions = {
@@ -137,12 +133,10 @@
     <script src="https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js"></script>
   </div>
 
-  <!-- CENTER CARD -->
   <div class="center">
     <div class="card" id="fileCard">Loading...</div>
   </div>
 
-  <!-- RIGHT AD -->
   <div class="side-ad">
     <script>
       atOptions = {
@@ -202,7 +196,6 @@ const db = firebase.firestore();
 let currentFileId = null;
 
 async function loadFile() {
-
   const id = Number(new URLSearchParams(location.search).get("id"));
 
   const res = await fetch("files.json");
@@ -278,17 +271,28 @@ async function loadFile() {
   `;
 }
 
+/* ✅ FIXED FUNCTION */
 function reportIssue() {
   const msg = prompt("Describe the issue:");
-  if (!msg) return;
+  if (!msg || msg.trim() === "") return;
+
+  if (!currentFileId) {
+    alert("Error: File not loaded yet.");
+    return;
+  }
 
   db.collection("reports").add({
     fileId: currentFileId,
-    message: msg,
+    message: msg.trim(),
     time: new Date()
+  })
+  .then(() => {
+    alert("Report submitted successfully 👍");
+  })
+  .catch((error) => {
+    console.error("Error adding report:", error);
+    alert("Failed to submit report ❌");
   });
-
-  alert("Report submitted 👍");
 }
 
 loadFile();
