@@ -255,7 +255,7 @@ async function loadFile() {
       let url = typeof l === "string" ? l : l.url;
       let label = typeof l === "string"
         ? `Download ${i+1}`
-        : (l.size ? `⬇ Watch ${l.size} ${l.unit}` : `Download ${i+1}`);
+        : (l.size ? `🎥 Watch ${l.size} ${l.unit} 🍿` : `Download ${i+1}`);
 
       downloadHTML += `
         <button onclick="window.open('${url}','_blank')">
