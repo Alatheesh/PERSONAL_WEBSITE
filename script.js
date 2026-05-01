@@ -219,22 +219,6 @@ if (toggleBtn) {
   });
 }
 
-// ---------------- REPORT TOGGLE (🔥 ADDED FIX) ----------------
-const reportToggle = document.getElementById("reportToggle");
-
-if (reportToggle) {
-
-  const saved = localStorage.getItem("reportEnabled");
-
-  if (saved === "true") {
-    reportToggle.checked = true;
-  }
-
-  reportToggle.addEventListener("change", function () {
-    localStorage.setItem("reportEnabled", reportToggle.checked ? "true" : "false");
-  });
-}
-
 // ---------------- INIT ----------------
 (async function init() {
   await loadJSON();
