@@ -103,7 +103,7 @@
       margin: 20px 0;
     }
 
-    /* 🔥 hidden by default */
+    /* hidden by default */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -197,13 +197,27 @@ const db = firebase.firestore();
 
 let currentFileId = null;
 
-/* 🔥 FINAL FIX */
-window.addEventListener("DOMContentLoaded", function () {
-  const enabled = localStorage.getItem("reportEnabled");
+/* 🔥 FINAL FIX (FIREBASE CONNECTED) */
+window.addEventListener("DOMContentLoaded", async function () {
+  try {
+    const doc = await db.collection("settings").doc("config").get();
 
-  if (enabled === "true" || enabled === "1" || enabled === "on") {
+    let enabled = true;
+
+    if (doc.exists) {
+      enabled = doc.data().reportEnabled !== false;
+    }
+
     const btn = document.getElementById("reportBtn");
-    if (btn) btn.style.display = "block";
+
+    if (enabled) {
+      btn.style.display = "block";
+    } else {
+      btn.style.display = "none";
+    }
+
+  } catch (e) {
+    console.error("Error loading report setting:", e);
   }
 });
 
