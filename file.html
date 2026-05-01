@@ -59,13 +59,11 @@
       width: 100%;
     }
 
-    /* 🔥 AD STYLE */
     .ad {
       margin: 20px 0;
       text-align: center;
     }
 
-    /* REPORT BUTTON */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -75,10 +73,6 @@
       border-radius: 8px;
       z-index: 1000;
       display: none;
-    }
-
-    #reportBtn:hover {
-      background: #ff2222;
     }
   </style>
 </head>
@@ -150,64 +144,70 @@ async function loadFile() {
     links = [file.link];
   }
 
-  // 🔥 CHECK REPORT TOGGLE
-  let reportEnabled = true;
-
+  // REPORT BUTTON
   try {
     const settingsDoc = await db.collection("settings").doc("config").get();
-    if (settingsDoc.exists) {
-      reportEnabled = settingsDoc.data().reportEnabled !== false;
-    }
-  } catch (e) {}
+    const enabled = settingsDoc.exists ? settingsDoc.data().reportEnabled !== false : true;
+    document.getElementById("reportBtn").style.display = enabled ? "block" : "none";
+  } catch {}
 
-  document.getElementById("reportBtn").style.display = reportEnabled ? "block" : "none";
+  // BUILD DOWNLOAD BUTTONS FIRST
+  let downloadHTML = "";
 
-  // 🔥 UI WITH AD INSERTED
+  if (links.length > 0) {
+    downloadHTML = `<div class="download-grid">`;
+
+    links.forEach((l,i) => {
+      let url, label;
+
+      if (typeof l === "string") {
+        url = l;
+        label = `Download ${i+1}`;
+      } else {
+        url = l.url;
+        label = l.size
+          ? `⬇ Download ${l.size} ${l.unit}`
+          : `Download ${i+1}`;
+      }
+
+      downloadHTML += `
+        <button onclick="window.open('${url}','_blank')">
+          ${label}
+        </button>
+      `;
+    });
+
+    downloadHTML += `</div>`;
+  } else {
+    downloadHTML = `<p style="opacity:0.7;">No download link available</p>`;
+  }
+
+  // FINAL UI (NO SCRIPT INSIDE TEMPLATE)
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
     <p>${file.type} • ${file.category}</p>
     <p>${file.description || ''}</p>
 
-    <!-- 🔥 MAIN AD (300x250) -->
-    <div class="ad">
-      <script>
-        atOptions = {
-          'key' : 'c371556f2f761e68ac3fdb0215382818',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      </script>
-      <script src="https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js"></script>
-    </div>
+    <div class="ad" id="adContainer"></div>
 
-    ${
-      links.length > 0
-      ? `<div class="download-grid">
-          ${links.map((l,i)=>{
-            let url, label;
+    ${downloadHTML}
+  `;
 
-            if (typeof l === "string") {
-              url = l;
-              label = `Download ${i+1}`;
-            } else {
-              url = l.url;
-              label = l.size
-                ? `⬇ Download ${l.size} ${l.unit}`
-                : `Download ${i+1}`;
-            }
+  // INSERT AD AFTER RENDER (IMPORTANT FIX)
+  const adContainer = document.getElementById("adContainer");
 
-            return `
-              <button onclick="window.open('${url}','_blank')">
-                ${label}
-              </button>
-            `;
-          }).join("")}
-         </div>`
-      : "<p style='opacity:0.7;'>No download link available</p>"
-    }
+  adContainer.innerHTML = `
+    <script>
+      atOptions = {
+        'key' : 'c371556f2f761e68ac3fdb0215382818',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    <\/script>
+    <script src="https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js"><\/script>
   `;
 }
 
