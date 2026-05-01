@@ -91,25 +91,25 @@
       margin: 20px 0;
     }
 
+    /* 🔥 REPORT BUTTON BACK */
     #reportBtn {
       position: fixed;
       top: 15px;
       right: 15px;
       background: #ff4444;
-      padding: 10px 14px;
+      padding: 10px;
       border-radius: 8px;
       z-index: 1000;
-      display: none;
     }
   </style>
 </head>
 <body>
 
-<button id="reportBtn" onclick="reportIssue()">⚠ Report Issue</button>
+<!-- ✅ REPORT BUTTON -->
+<button id="reportBtn" onclick="reportIssue()">⚠ Report</button>
 
 <div class="page">
 
-  <!-- ✅ LEFT AD -->
   <div class="side-ad">
     <script>
       atOptions = {
@@ -123,7 +123,6 @@
     <script src="https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js"></script>
   </div>
 
-  <!-- CENTER -->
   <div class="center">
     <div class="card" id="fileCard">Loading...</div>
   </div>
@@ -132,7 +131,6 @@
 
 <button class="back" onclick="history.back()">← Back</button>
 
-<!-- ✅ MOBILE AD -->
 <div class="mobile-ad">
   <script>
     atOptions = {
@@ -146,7 +144,6 @@
   <script src="https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js"></script>
 </div>
 
-<!-- ✅ BOTTOM BANNER -->
 <div class="bottom-banner">
   <script>
     atOptions = {
@@ -160,7 +157,6 @@
   <script src="https://www.highperformanceformat.com/9d4e234e334f6012b5b60f60507d7877/invoke.js"></script>
 </div>
 
-<!-- 🔥 YOUR ORIGINAL FIREBASE + LOGIC (UNCHANGED) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -176,8 +172,8 @@ const db = firebase.firestore();
 
 let currentFileId = null;
 
-// 🔥 YOUR ORIGINAL loadFile FUNCTION (unchanged)
 async function loadFile() {
+
   const id = Number(new URLSearchParams(location.search).get("id"));
 
   const res = await fetch("files.json");
@@ -209,14 +205,51 @@ async function loadFile() {
 
   currentFileId = file.id;
 
+  let links = [];
+
+  if (Array.isArray(file.links) && file.links.length > 0) {
+    links = file.links;
+  } 
+  else if (Array.isArray(file.downloads) && file.downloads.length > 0) {
+    links = file.downloads;
+  } 
+  else if (file.link && typeof file.link === "string" && file.link.trim() !== "") {
+    links = [file.link];
+  }
+
+  let downloadHTML = "";
+
+  if (links.length > 0) {
+    downloadHTML = `<div class="download-grid">`;
+
+    links.forEach((l,i) => {
+      let url = typeof l === "string" ? l : l.url;
+      let label = typeof l === "string"
+        ? `Download ${i+1}`
+        : (l.size ? `⬇ ${l.size} ${l.unit}` : `Download ${i+1}`);
+
+      downloadHTML += `
+        <button onclick="window.open('${url}','_blank')">
+          ${label}
+        </button>
+      `;
+    });
+
+    downloadHTML += `</div>`;
+  } else {
+    downloadHTML = `<p>No download link available</p>`;
+  }
+
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
     <p>${file.type} • ${file.category}</p>
     <p>${file.description || ''}</p>
+    ${downloadHTML}
   `;
 }
 
+/* ✅ REPORT FUNCTION FIXED */
 function reportIssue() {
   const msg = prompt("Describe the issue:");
   if (!msg) return;
