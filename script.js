@@ -42,7 +42,7 @@ async function getTotalCount() {
   totalFilesCount = Math.max(highestId, allJsonFiles.length);
 }
 
-// ---------------- LOAD PAGE (LIFO FIXED) ----------------
+// ---------------- LOAD PAGE ----------------
 async function loadPage(page) {
 
   if (pageCache[page]) {
@@ -51,17 +51,14 @@ async function loadPage(page) {
     return;
   }
 
-  // 🔥 LIFO CALCULATION
   const startId = totalFilesCount - (page * itemsPerPage) + 1;
   const endId = totalFilesCount - ((page - 1) * itemsPerPage);
   const safeStart = Math.max(1, startId);
 
-  // 🔹 JSON
   const localFiles = allJsonFiles.filter(f =>
     f.id >= safeStart && f.id <= endId
   );
 
-  // 🔹 FIREBASE
   const snapshot = await db.collection("files")
     .where("customId", ">=", safeStart)
     .where("customId", "<=", endId)
@@ -82,11 +79,9 @@ async function loadPage(page) {
 
   const pageFiles = [...localFiles, ...firebaseFiles];
 
-  // 🔥 NEWEST FIRST
   pageFiles.sort((a, b) => b.id - a.id);
 
   pageCache[page] = pageFiles;
-
   currentFiles = pageFiles;
 
   displayFiles();
@@ -125,25 +120,12 @@ function createPagination() {
 
   html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
 
-  let startPage = Math.max(1, currentPage - 2);
-  let endPage = Math.min(totalPages, currentPage + 2);
-
-  if (startPage > 1) {
-    html += `<button onclick="goToPage(1)">1</button>`;
-    if (startPage > 2) html += `<span>...</span>`;
-  }
-
-  for (let i = startPage; i <= endPage; i++) {
+  for (let i = 1; i <= totalPages; i++) {
     html += `
       <button class="${i === currentPage ? 'active-page' : ''}" onclick="goToPage(${i})">
         ${i}
       </button>
     `;
-  }
-
-  if (endPage < totalPages) {
-    if (endPage < totalPages - 1) html += `<span>...</span>`;
-    html += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
   }
 
   html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
@@ -156,7 +138,6 @@ function createPagination() {
 // ---------------- PAGE SWITCH ----------------
 function goToPage(page) {
   if (page < 1) return;
-
   currentPage = page;
   loadPage(page);
 }
@@ -182,7 +163,6 @@ document.getElementById("search").addEventListener("input", async function (e) {
 
   let results = [];
 
-  // JSON search
   const localMatches = allJsonFiles.filter(file =>
     file.name.toLowerCase().includes(value) ||
     file.category.toLowerCase().includes(value) ||
@@ -191,7 +171,6 @@ document.getElementById("search").addEventListener("input", async function (e) {
 
   results.push(...localMatches);
 
-  // Firebase search
   const snapshot = await db.collection("files")
     .where("name", ">=", value)
     .where("name", "<=", value + "\uf8ff")
@@ -217,25 +196,6 @@ document.getElementById("search").addEventListener("input", async function (e) {
   currentFiles = results;
   displayFiles();
 });
-
-// ---------------- FILTER ----------------
-function filterFiles(type) {
-  if (type === "All") {
-    loadPage(currentPage);
-    return;
-  }
-
-  const filtered = [];
-
-  Object.values(pageCache).forEach(page => {
-    page.forEach(file => {
-      if (file.type === type) filtered.push(file);
-    });
-  });
-
-  currentFiles = filtered;
-  displayFiles();
-}
 
 // ---------------- DARK MODE ----------------
 const toggleBtn = document.getElementById("themeToggle");
