@@ -91,7 +91,6 @@
       margin: 20px 0;
     }
 
-    /* 🔥 REPORT BUTTON BACK */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -105,11 +104,11 @@
 </head>
 <body>
 
-<!-- ✅ REPORT BUTTON -->
 <button id="reportBtn" onclick="reportIssue()">⚠ Report</button>
 
 <div class="page">
 
+  <!-- LEFT AD -->
   <div class="side-ad">
     <script>
       atOptions = {
@@ -123,8 +122,23 @@
     <script src="https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js"></script>
   </div>
 
+  <!-- CENTER CARD -->
   <div class="center">
     <div class="card" id="fileCard">Loading...</div>
+  </div>
+
+  <!-- RIGHT AD (NEW SLOT) -->
+  <div class="side-ad">
+    <script>
+      atOptions = {
+        'key' : 'RIGHT_KEY_HERE',
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/RIGHT_KEY_HERE/invoke.js"></script>
   </div>
 
 </div>
@@ -249,7 +263,6 @@ async function loadFile() {
   `;
 }
 
-/* ✅ REPORT FUNCTION FIXED */
 function reportIssue() {
   const msg = prompt("Describe the issue:");
   if (!msg) return;
