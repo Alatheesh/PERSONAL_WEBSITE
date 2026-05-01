@@ -72,7 +72,6 @@
       margin-top: 15px;
     }
 
-    /* MOBILE AD */
     .mobile-ad {
       display: none;
       text-align: center;
@@ -85,7 +84,6 @@
       }
     }
 
-    /* 🔥 NEW BOTTOM BANNER */
     .bottom-banner {
       width: 100%;
       text-align: center;
@@ -109,7 +107,6 @@
 <button id="reportBtn" onclick="reportIssue()">⚠ Report Issue</button>
 
 <div class="page">
-
   <div class="side-ad" id="leftAd"></div>
 
   <div class="center">
@@ -117,15 +114,11 @@
   </div>
 
   <div class="side-ad" id="rightAd"></div>
-
 </div>
 
 <button class="back" onclick="history.back()">← Back</button>
 
-<!-- 🔥 MOBILE AD -->
 <div class="mobile-ad" id="mobileAd"></div>
-
-<!-- 🔥 NEW BOTTOM BANNER -->
 <div class="bottom-banner" id="bottomBanner"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -219,12 +212,12 @@ async function loadFile() {
     ${downloadHTML}
   `;
 
-  // SIDE + MOBILE ADS
-  function createAd(container) {
+  // 🔥 MULTI-AD SUPPORT
+  function createAd(container, key) {
     const s1 = document.createElement("script");
     s1.innerHTML = `
       atOptions = {
-        'key' : '6d18eab8e3174f704484a4e5fb7166a4',
+        'key' : '${key}',
         'format' : 'iframe',
         'height' : 300,
         'width' : 160,
@@ -232,16 +225,19 @@ async function loadFile() {
       };
     `;
     const s2 = document.createElement("script");
-    s2.src = "https://www.highperformanceformat.com/6d18eab8e3174f704484a4e5fb7166a4/invoke.js";
+    s2.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
     container.appendChild(s1);
     container.appendChild(s2);
   }
 
-  createAd(document.getElementById("leftAd"));
-  createAd(document.getElementById("rightAd"));
-  createAd(document.getElementById("mobileAd"));
+  // 🔥 YOUR CURRENT KEY
+  const SIDE_KEY = "6d18eab8e3174f704484a4e5fb7166a4";
 
-  // 🔥 BOTTOM BANNER (728x90)
+  createAd(document.getElementById("leftAd"), SIDE_KEY);
+  createAd(document.getElementById("rightAd"), SIDE_KEY); // may not show (normal)
+  createAd(document.getElementById("mobileAd"), SIDE_KEY);
+
+  // 🔥 BOTTOM BANNER
   function loadBottomBanner() {
     const container = document.getElementById("bottomBanner");
 
