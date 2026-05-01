@@ -48,7 +48,6 @@
       margin-bottom: 30px;
     }
 
-    /* GRID */
     .download-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -60,7 +59,13 @@
       width: 100%;
     }
 
-    /* 🔥 REPORT BUTTON (hidden by default) */
+    /* 🔥 AD STYLE */
+    .ad {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    /* REPORT BUTTON */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -69,7 +74,7 @@
       padding: 10px 14px;
       border-radius: 8px;
       z-index: 1000;
-      display: none; /* 🔥 IMPORTANT */
+      display: none;
     }
 
     #reportBtn:hover {
@@ -153,29 +158,35 @@ async function loadFile() {
     if (settingsDoc.exists) {
       reportEnabled = settingsDoc.data().reportEnabled !== false;
     }
-  } catch (e) {
-    console.log("Settings fetch error", e);
-  }
+  } catch (e) {}
 
-  // 🔥 CONTROL BUTTON VISIBILITY
-  if (reportEnabled) {
-    document.getElementById("reportBtn").style.display = "block";
-  } else {
-    document.getElementById("reportBtn").style.display = "none";
-  }
+  document.getElementById("reportBtn").style.display = reportEnabled ? "block" : "none";
 
-  // 🔥 UI
+  // 🔥 UI WITH AD INSERTED
   fileCard.innerHTML = `
     <img src="${file.image || 'https://via.placeholder.com/300'}">
     <h2>${file.name}</h2>
     <p>${file.type} • ${file.category}</p>
     <p>${file.description || ''}</p>
 
+    <!-- 🔥 MAIN AD (300x250) -->
+    <div class="ad">
+      <script>
+        atOptions = {
+          'key' : 'c371556f2f761e68ac3fdb0215382818',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highperformanceformat.com/c371556f2f761e68ac3fdb0215382818/invoke.js"></script>
+    </div>
+
     ${
       links.length > 0
       ? `<div class="download-grid">
           ${links.map((l,i)=>{
-
             let url, label;
 
             if (typeof l === "string") {
