@@ -103,7 +103,6 @@
       margin: 20px 0;
     }
 
-    /* hidden by default */
     #reportBtn {
       position: fixed;
       top: 15px;
@@ -197,11 +196,9 @@ const db = firebase.firestore();
 
 let currentFileId = null;
 
-/* 🔥 FINAL FIX (FIREBASE CONNECTED) */
 window.addEventListener("DOMContentLoaded", async function () {
   try {
     const doc = await db.collection("settings").doc("config").get();
-
     let enabled = true;
 
     if (doc.exists) {
@@ -209,12 +206,7 @@ window.addEventListener("DOMContentLoaded", async function () {
     }
 
     const btn = document.getElementById("reportBtn");
-
-    if (enabled) {
-      btn.style.display = "block";
-    } else {
-      btn.style.display = "none";
-    }
+    btn.style.display = enabled ? "block" : "none";
 
   } catch (e) {
     console.error("Error loading report setting:", e);
@@ -277,7 +269,7 @@ async function loadFile() {
         : (l.size ? `🎥 Watch ${l.size} ${l.unit} 🍿` : `Watch ${i+1}`);
 
       downloadHTML += `
-        <button onclick="window.open('${url}','_blank')">
+        <button onclick="openWatch('${url}')">
           ${label}
         </button>
       `;
@@ -295,6 +287,12 @@ async function loadFile() {
     <p>${file.description || ''}</p>
     ${downloadHTML}
   `;
+}
+
+function openWatch(link){
+  const encoded = encodeURIComponent(link);
+  window.location.href =
+    "https://YOUR-NETLIFY-SITE.netlify.app/watch.html?link=" + encoded;
 }
 
 function reportIssue() {
